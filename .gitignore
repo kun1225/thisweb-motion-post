@@ -1,0 +1,5 @@
+node_modules
+out
+# Demo footage is large and lives in the post's asset folder; copy it back to render.
+public/**/*.mp4
+.DS_Store
