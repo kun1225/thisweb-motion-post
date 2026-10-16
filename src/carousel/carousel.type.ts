@@ -2,6 +2,40 @@ import type { ReactNode } from 'react';
 
 export type CarouselLang = 'en' | 'zh';
 
+export type CarouselTextLayer = {
+  text: string;
+  fontFamily: string;
+  fontSize: number;
+  color: string;
+  x: number;
+  y: number;
+};
+
+export type CarouselMediaLayer = {
+  x: number;
+  y: number;
+  scale: number;
+  file?: string;
+  frames?: number;
+  ratio?: number;
+};
+
+export type CarouselLayerSettings = {
+  title: CarouselTextLayer;
+  subtitle?: CarouselTextLayer;
+  media?: CarouselMediaLayer;
+};
+
+export type CarouselCompositionProps = {
+  layers: CarouselLayerSettings;
+};
+
+export type ResolvedCarouselComposition = {
+  post: CarouselPost;
+  slide: CarouselSlide;
+  lang: CarouselLang;
+};
+
 export type CarouselMedia =
   /** A file in `public/`, played once for the whole slide. */
   | { kind: 'video'; file: string; frames: number; ratio: number }

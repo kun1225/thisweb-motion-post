@@ -1,5 +1,5 @@
 import type { CarouselPost } from '../carousel/carousel.type';
 import { flipAnimationPost } from './flip-animation/flip-animation';
 
-// Add each new post here to get its compositions in the studio.
+// Keep post-specific animations out of the shared carousel layout.
 export const POSTS: CarouselPost[] = [flipAnimationPost];

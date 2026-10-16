@@ -1,12 +1,21 @@
 import { Fragment } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
-import { AbsoluteFill, Loop, OffthreadVideo, staticFile } from 'remotion';
+import {
+  AbsoluteFill,
+  Loop,
+  OffthreadVideo,
+  Sequence,
+  staticFile,
+} from 'remotion';
 
 import type {
   CarouselLang,
+  CarouselLayerSettings,
   CarouselMedia,
+  CarouselMediaLayer,
   CarouselPost,
   CarouselSlide,
+  CarouselTextLayer,
 } from './carousel.type';
 
 export const CAROUSEL_SIZE = { width: 1080, height: 1350 };
@@ -34,10 +43,12 @@ const CONTENT_WIDTH = CAROUSEL_SIZE.width - PAD_X * 2;
 export function CarouselSlideView({
   slide,
   lang,
+  layers,
   renderClip,
 }: {
   slide: CarouselSlide;
   lang: CarouselLang;
+  layers: CarouselLayerSettings;
   renderClip: CarouselPost['renderClip'];
 }) {
   return (
@@ -49,16 +60,20 @@ export function CarouselSlideView({
       }}
     >
       {slide.layout === 'cover' && (
-        <CarouselCover slide={slide} renderClip={renderClip} />
+        <CarouselCover slide={slide} layers={layers} renderClip={renderClip} />
       )}
       {slide.layout === 'content' && (
-        <CarouselContent slide={slide} renderClip={renderClip} />
+        <CarouselContent
+          slide={slide}
+          layers={layers}
+          renderClip={renderClip}
+        />
       )}
       {slide.layout === 'list' && (
-        <CarouselList slide={slide} renderClip={renderClip} />
+        <CarouselList slide={slide} layers={layers} renderClip={renderClip} />
       )}
       {slide.layout === 'result' && (
-        <CarouselResult slide={slide} renderClip={renderClip} />
+        <CarouselResult slide={slide} layers={layers} renderClip={renderClip} />
       )}
       <CarouselFooter />
     </AbsoluteFill>
@@ -76,9 +91,11 @@ export function carouselSlideDuration(slide: CarouselSlide) {
 // *** CarouselCover ***
 function CarouselCover({
   slide,
+  layers,
   renderClip,
 }: {
   slide: Extract<CarouselSlide, { layout: 'cover' }>;
+  layers: CarouselLayerSettings;
   renderClip: CarouselPost['renderClip'];
 }) {
   return (
@@ -93,20 +110,34 @@ function CarouselCover({
           textAlign: 'center',
         }}
       >
-        <div style={{ fontSize: 53, color: '#F7F7F7' }}>{slide.subtitle}</div>
-        <div
-          style={{
-            marginTop: 28,
-            fontSize: 87,
-            fontWeight: 700,
-            color: COLOR.title,
-          }}
-        >
-          {slide.title}
-        </div>
+        <Sequence name="Subtitle" layout="none">
+          <div
+            style={{
+              fontSize: 53,
+              color: '#F7F7F7',
+              ...carouselTextStyle(layers.subtitle),
+            }}
+          >
+            {slide.subtitle}
+          </div>
+        </Sequence>
+        <Sequence name="Title" layout="none">
+          <div
+            style={{
+              marginTop: 28,
+              fontSize: 87,
+              fontWeight: 700,
+              color: COLOR.title,
+              ...carouselTextStyle(layers.title),
+            }}
+          >
+            {slide.title}
+          </div>
+        </Sequence>
       </div>
       <CarouselMediaBox
         media={slide.media}
+        settings={layers.media}
         renderClip={renderClip}
         style={{ top: 560, bottom: 170 }}
       />
@@ -117,14 +148,16 @@ function CarouselCover({
 // *** CarouselContent ***
 function CarouselContent({
   slide,
+  layers,
   renderClip,
 }: {
   slide: Extract<CarouselSlide, { layout: 'content' }>;
+  layers: CarouselLayerSettings;
   renderClip: CarouselPost['renderClip'];
 }) {
   return (
     <CarouselColumn>
-      <CarouselTitle>{slide.title}</CarouselTitle>
+      <CarouselTitle settings={layers.title}>{slide.title}</CarouselTitle>
       <p
         style={{
           margin: '36px 0 0',
@@ -137,6 +170,7 @@ function CarouselContent({
       </p>
       <CarouselMediaBox
         media={slide.media}
+        settings={layers.media}
         renderClip={renderClip}
         style={{ position: 'relative', flex: 1, marginTop: 56 }}
       />
@@ -147,13 +181,15 @@ function CarouselContent({
 // *** CarouselList ***
 function CarouselList({
   slide,
+  layers,
 }: {
   slide: Extract<CarouselSlide, { layout: 'list' }>;
+  layers: CarouselLayerSettings;
   renderClip: CarouselPost['renderClip'];
 }) {
   return (
     <CarouselColumn>
-      <CarouselTitle>{slide.title}</CarouselTitle>
+      <CarouselTitle settings={layers.title}>{slide.title}</CarouselTitle>
       <div
         style={{
           display: 'flex',
@@ -201,16 +237,19 @@ function CarouselList({
 // *** CarouselResult ***
 function CarouselResult({
   slide,
+  layers,
   renderClip,
 }: {
   slide: Extract<CarouselSlide, { layout: 'result' }>;
+  layers: CarouselLayerSettings;
   renderClip: CarouselPost['renderClip'];
 }) {
   return (
     <CarouselColumn>
-      <CarouselTitle>{slide.title}</CarouselTitle>
+      <CarouselTitle settings={layers.title}>{slide.title}</CarouselTitle>
       <CarouselMediaBox
         media={slide.media}
+        settings={layers.media}
         renderClip={renderClip}
         style={{ position: 'relative', flex: 1, marginTop: 44 }}
       />
@@ -253,19 +292,28 @@ function CarouselColumn({ children }: { children: ReactNode }) {
 }
 
 // *** CarouselTitle ***
-function CarouselTitle({ children }: { children: ReactNode }) {
+function CarouselTitle({
+  children,
+  settings,
+}: {
+  children: ReactNode;
+  settings: CarouselTextLayer;
+}) {
   return (
-    <h1
-      style={{
-        margin: 0,
-        fontSize: 54,
-        lineHeight: 1.3,
-        fontWeight: 700,
-        color: COLOR.title,
-      }}
-    >
-      {children}
-    </h1>
+    <Sequence name="Title" layout="none">
+      <h1
+        style={{
+          margin: 0,
+          fontSize: 54,
+          lineHeight: 1.3,
+          fontWeight: 700,
+          color: COLOR.title,
+          ...carouselTextStyle(settings),
+        }}
+      >
+        {children}
+      </h1>
+    </Sequence>
   );
 }
 
@@ -273,10 +321,12 @@ function CarouselTitle({ children }: { children: ReactNode }) {
 /** Centres the media in the space it gets and keeps its ratio. */
 function CarouselMediaBox({
   media,
+  settings,
   renderClip,
   style,
 }: {
   media: CarouselMedia;
+  settings?: CarouselMediaLayer;
   renderClip: CarouselPost['renderClip'];
   style: CSSProperties;
 }) {
@@ -284,48 +334,66 @@ function CarouselMediaBox({
   const { ratio } = media;
 
   return (
-    <div
-      style={{
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: 0,
-        ...style,
-      }}
+    <Sequence
+      name={media.kind === 'video' ? 'Video' : 'Animation'}
+      layout="none"
     >
       <div
         style={{
-          position: 'relative',
-          aspectRatio: ratio,
-          // A tall clip fills the height, a wide one the width.
-          ...(ratio < 1 ? { height: '100%' } : { width: '100%' }),
-          maxWidth: '100%',
-          maxHeight: '100%',
-          borderRadius: 24,
-          overflow: 'hidden',
-          boxShadow: '0 24px 60px rgba(0, 0, 0, 0.35)',
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: 0,
+          ...style,
         }}
       >
-        {media.kind === 'video' ? (
-          <OffthreadVideo
-            src={staticFile(media.file)}
-            muted
-            style={{ width: '100%', height: '100%' }}
-          />
-        ) : (
-          <Loop durationInFrames={media.frames}>
-            {renderClip?.(media.id, {
-              width: CONTENT_WIDTH,
-              height: CONTENT_WIDTH / ratio,
-            })}
-          </Loop>
-        )}
+        <div
+          style={{
+            position: 'relative',
+            aspectRatio: ratio,
+            // A tall clip fills the height, a wide one the width.
+            ...(ratio < 1 ? { height: '100%' } : { width: '100%' }),
+            maxWidth: '100%',
+            maxHeight: '100%',
+            borderRadius: 24,
+            overflow: 'hidden',
+            boxShadow: '0 24px 60px rgba(0, 0, 0, 0.35)',
+            translate: settings ? `${settings.x}px ${settings.y}px` : undefined,
+            scale: settings?.scale,
+          }}
+        >
+          {media.kind === 'video' ? (
+            <OffthreadVideo
+              src={staticFile(media.file)}
+              muted
+              style={{ width: '100%', height: '100%' }}
+            />
+          ) : (
+            <Loop durationInFrames={media.frames}>
+              {renderClip?.(media.id, {
+                width: CONTENT_WIDTH,
+                height: CONTENT_WIDTH / ratio,
+              })}
+            </Loop>
+          )}
+        </div>
       </div>
-    </div>
+    </Sequence>
   );
+}
+
+function carouselTextStyle(settings?: CarouselTextLayer): CSSProperties {
+  if (!settings) return {};
+
+  return {
+    fontFamily: settings.fontFamily,
+    fontSize: settings.fontSize,
+    color: settings.color,
+    translate: `${settings.x}px ${settings.y}px`,
+  };
 }
 
 // *** CarouselRichText ***
