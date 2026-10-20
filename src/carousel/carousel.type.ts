@@ -4,7 +4,8 @@ export type CarouselLang = 'en' | 'zh';
 
 export type CarouselTextLayer = {
   text: string;
-  fontFamily: string;
+  /** Leave unset to use the layout's font for the slide's language. */
+  fontFamily?: string;
   fontSize: number;
   color: string;
   x: number;
@@ -20,8 +21,12 @@ export type CarouselMediaLayer = {
   ratio?: number;
 };
 
-export type CarouselBackgroundVariant =
-  'drift' | 'breathe' | 'aurora' | 'sway' | 'sheen';
+export type CarouselBackgroundVariant = 'drift' | 'grid' | 'code';
+
+export type CarouselBackgroundProps = {
+  /** 0 at the first frame, approaching 1 at the last. */
+  progress: number;
+};
 
 export type CarouselCoverLayout = 'stack' | 'split' | 'caption' | 'poster';
 
@@ -30,8 +35,6 @@ export type CarouselLayerSettings = {
   background?: CarouselBackgroundVariant;
   /** Cover slides only. */
   coverLayout?: CarouselCoverLayout;
-  logo?: CarouselTextLayer;
-  footer: CarouselTextLayer;
   title: CarouselTextLayer;
   subtitle?: CarouselTextLayer;
   media?: CarouselMediaLayer;
@@ -39,12 +42,9 @@ export type CarouselLayerSettings = {
 
 export type CarouselCoverProps = {
   slide: Extract<CarouselSlide, { layout: 'cover' }>;
+  lang: CarouselLang;
   layers: CarouselLayerSettings;
   renderClip: CarouselPost['renderClip'];
-};
-
-export type CarouselBrandingProps = {
-  settings: CarouselTextLayer | undefined;
 };
 
 export type CarouselCompositionProps = {

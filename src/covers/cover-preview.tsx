@@ -7,17 +7,17 @@ import {
   CarouselSlideView,
 } from '../carousel/carousel-slide';
 import type {
-  CarouselCompositionProps,
   CarouselCoverLayout,
   CarouselLayerSettings,
   CarouselMedia,
 } from '../carousel/carousel.type';
+import type { CoverPreviewProps } from './cover-preview.type';
 
 // Long enough that the background animation moves slowly, like on a real cover.
 export const COVER_PREVIEW_FRAMES = 240;
 
 /** One cover with sample content, so layouts can be tuned without a real post. */
-export function CoverPreview({ layers }: CarouselCompositionProps) {
+export function CoverPreview({ layers, lang = 'en' }: CoverPreviewProps) {
   return (
     <CarouselSlideView
       slide={{
@@ -26,7 +26,7 @@ export function CoverPreview({ layers }: CarouselCompositionProps) {
         subtitle: layers.subtitle?.text ?? '',
         media: SAMPLE_MEDIA,
       }}
-      lang="en"
+      lang={lang}
       layers={layers}
       renderClip={renderMediaPlaceholder}
     />
@@ -34,7 +34,7 @@ export function CoverPreview({ layers }: CarouselCompositionProps) {
 }
 
 /** Every cover layout in one 2×2 grid, each with its own text sizes. */
-export function CoverGallery({ layers }: CarouselCompositionProps) {
+export function CoverGallery({ layers, lang }: CoverPreviewProps) {
   return (
     <AbsoluteFill
       style={{
@@ -56,7 +56,10 @@ export function CoverGallery({ layers }: CarouselCompositionProps) {
               transformOrigin: 'top left',
             }}
           >
-            <CoverPreview layers={withLayout(layers, coverLayout)} />
+            <CoverPreview
+              layers={withLayout(layers, coverLayout)}
+              lang={lang}
+            />
           </div>
           <div
             style={{

@@ -9,7 +9,6 @@ import {
 } from 'remotion';
 
 import type {
-  CarouselBrandingProps,
   CarouselCoverLayout,
   CarouselCoverProps,
   CarouselLang,
@@ -38,9 +37,16 @@ const COLOR = {
   card: 'rgba(0, 0, 0, 0.25)',
 };
 const MONO = '"Paper Mono", ui-monospace, monospace';
-const FONT: Record<CarouselLang, string> = {
-  en: '"IBM Plex Sans", sans-serif',
-  zh: '"LINE Seed TW_TTF", "LINE Seed TW", sans-serif',
+// The Latin font comes first in zh too, so English words in Chinese text match the en slides.
+const FONT: Record<CarouselLang, { sans: string; serif: string }> = {
+  en: {
+    sans: '"IBM Plex Sans", sans-serif',
+    serif: '"Source Serif 4", serif',
+  },
+  zh: {
+    sans: '"IBM Plex Sans", "Noto Sans TC", sans-serif',
+    serif: '"Source Serif 4", "Noto Serif TC", serif',
+  },
 };
 const PAD_X = 110;
 const CONTENT_WIDTH = CAROUSEL_SIZE.width - PAD_X * 2;
@@ -61,7 +67,7 @@ export function CarouselSlideView({
     <AbsoluteFill
       style={{
         color: COLOR.text,
-        fontFamily: FONT[lang],
+        fontFamily: FONT[lang].sans,
       }}
     >
       {slide.layout === 'cover' ? (
@@ -72,7 +78,12 @@ export function CarouselSlideView({
         <CarouselBackground />
       )}
       {slide.layout === 'cover' && (
-        <CarouselCover slide={slide} layers={layers} renderClip={renderClip} />
+        <CarouselCover
+          slide={slide}
+          lang={lang}
+          layers={layers}
+          renderClip={renderClip}
+        />
       )}
       {slide.layout === 'content' && (
         <CarouselContent
@@ -87,7 +98,7 @@ export function CarouselSlideView({
       {slide.layout === 'result' && (
         <CarouselResult slide={slide} layers={layers} renderClip={renderClip} />
       )}
-      <CarouselFooter settings={layers.footer} />
+      <CarouselFooter />
     </AbsoluteFill>
   );
 }
@@ -109,12 +120,7 @@ function CarouselCover(props: CarouselCoverProps) {
       `Unknown cover layout "${layout}". Use one of: ${Object.keys(COVER_LAYOUTS).join(', ')}.`,
     );
   }
-  return (
-    <>
-      <CarouselLogo settings={props.layers.logo} />
-      <Layout {...props} />
-    </>
-  );
+  return <Layout {...props} />;
 }
 
 /** Each layout's own text sizes; a slide's `layers` values override them. */
@@ -132,8 +138,8 @@ export const CAROUSEL_COVER_LAYOUTS = Object.keys(
   COVER_TEXT_SIZE,
 ) as CarouselCoverLayout[];
 
-// Starts below the logo and ends above the footer, so long titles wrap instead of overlapping them.
-const COVER_INSET = `230px ${PAD_X}px 200px`;
+// Ends well above the footer, so long titles wrap instead of overlapping it.
+const COVER_INSET = `150px ${PAD_X}px 280px`;
 
 const COVER_LAYOUTS: Record<
   CarouselCoverLayout,
@@ -146,13 +152,13 @@ const COVER_LAYOUTS: Record<
 };
 
 /** Subtitle and title centred at the top, media below. */
-function CoverStack({ slide, layers, renderClip }: CarouselCoverProps) {
+function CoverStack({ slide, lang, layers, renderClip }: CarouselCoverProps) {
   return (
     <>
       <div
         style={{
           position: 'absolute',
-          top: 250,
+          top: 170,
           left: 0,
           right: 0,
           textAlign: 'center',
@@ -171,7 +177,8 @@ function CoverStack({ slide, layers, renderClip }: CarouselCoverProps) {
           style={{
             marginTop: 28,
             fontSize: COVER_TEXT_SIZE.stack.title,
-            fontWeight: 700,
+            fontFamily: FONT[lang].serif,
+            fontWeight: 600,
             color: COLOR.title,
           }}
         >
@@ -182,14 +189,14 @@ function CoverStack({ slide, layers, renderClip }: CarouselCoverProps) {
         media={slide.media}
         settings={layers.media}
         renderClip={renderClip}
-        style={{ top: 560, bottom: 170 }}
+        style={{ top: 480, bottom: 250 }}
       />
     </>
   );
 }
 
 /** Title at the top left, subtitle at the bottom right. Text only. */
-function CoverSplit({ slide, layers }: CarouselCoverProps) {
+function CoverSplit({ slide, lang, layers }: CarouselCoverProps) {
   return (
     <div
       style={{
@@ -206,7 +213,8 @@ function CoverSplit({ slide, layers }: CarouselCoverProps) {
         style={{
           fontSize: COVER_TEXT_SIZE.split.title,
           lineHeight: 1.05,
-          fontWeight: 700,
+          fontFamily: FONT[lang].serif,
+          fontWeight: 600,
           color: COLOR.title,
         }}
       >
@@ -229,7 +237,7 @@ function CoverSplit({ slide, layers }: CarouselCoverProps) {
 }
 
 /** Title at the top, media in the middle, subtitle as a small caption. All centred. */
-function CoverCaption({ slide, layers, renderClip }: CarouselCoverProps) {
+function CoverCaption({ slide, lang, layers, renderClip }: CarouselCoverProps) {
   return (
     <div
       style={{
@@ -246,7 +254,8 @@ function CoverCaption({ slide, layers, renderClip }: CarouselCoverProps) {
         style={{
           fontSize: COVER_TEXT_SIZE.caption.title,
           lineHeight: 1.15,
-          fontWeight: 700,
+          fontFamily: FONT[lang].serif,
+          fontWeight: 600,
           color: COLOR.title,
         }}
       >
@@ -276,7 +285,7 @@ function CoverCaption({ slide, layers, renderClip }: CarouselCoverProps) {
 }
 
 /** A large title pushed to the bottom left, subtitle as a small label above it. Text only. */
-function CoverPoster({ slide, layers }: CarouselCoverProps) {
+function CoverPoster({ slide, lang, layers }: CarouselCoverProps) {
   return (
     <div
       style={{
@@ -300,7 +309,8 @@ function CoverPoster({ slide, layers }: CarouselCoverProps) {
         style={{
           fontSize: COVER_TEXT_SIZE.poster.title,
           lineHeight: 1.02,
-          fontWeight: 700,
+          fontFamily: FONT[lang].serif,
+          fontWeight: 600,
           color: COLOR.title,
         }}
       >
@@ -572,7 +582,8 @@ function carouselTextStyle(settings?: CarouselTextLayer): CSSProperties {
   if (!settings) return {};
 
   return {
-    fontFamily: settings.fontFamily,
+    // An unset font must not erase the layout's font when spread over it.
+    ...(settings.fontFamily && { fontFamily: settings.fontFamily }),
     fontSize: settings.fontSize,
     color: settings.color,
     translate: `${settings.x}px ${settings.y}px`,
@@ -605,49 +616,23 @@ function CarouselRichText({ text }: { text: string }) {
   );
 }
 
-// *** CarouselLogo ***
-function CarouselLogo({ settings }: CarouselBrandingProps) {
-  return (
-    <Sequence name="Logo" layout="none">
-      <div
-        style={{
-          position: 'absolute',
-          left: 84,
-          top: 70,
-          // Closest local match to the Canva logo's light condensed face.
-          fontFamily: '"Avenir Next Condensed", sans-serif',
-          fontWeight: 200,
-          fontSize: 85,
-          letterSpacing: -2,
-          color: '#D9DCE3',
-          ...carouselTextStyle(settings),
-        }}
-      >
-        {settings?.text ?? '.W'}
-      </div>
-    </Sequence>
-  );
-}
-
 // *** CarouselFooter ***
-function CarouselFooter({ settings }: CarouselBrandingProps) {
+// Not a layer, so the brand looks the same on every post.
+function CarouselFooter() {
   return (
-    <Sequence name="Footer" layout="none">
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 70,
-          left: 0,
-          right: 0,
-          textAlign: 'center',
-          fontFamily: MONO,
-          fontSize: 35,
-          color: 'rgba(255, 255, 255, 0.6)',
-          ...carouselTextStyle(settings),
-        }}
-      >
-        {settings?.text ?? '@this.web'}
-      </div>
-    </Sequence>
+    <div
+      style={{
+        position: 'absolute',
+        bottom: 70,
+        left: 0,
+        right: 0,
+        textAlign: 'center',
+        fontFamily: MONO,
+        fontSize: 32,
+        color: 'rgba(255, 255, 255, 0.6)',
+      }}
+    >
+      @this.web
+    </div>
   );
 }

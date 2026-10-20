@@ -17,25 +17,8 @@ export function RemotionRoot() {
         defaultProps={{
           layers: {
             background: 'drift',
-            logo: {
-              text: '.W',
-              fontFamily: '"Avenir Next Condensed", sans-serif',
-              fontSize: 85,
-              color: '#D9DCE3',
-              x: 0,
-              y: 0,
-            },
-            footer: {
-              text: '@this.web',
-              fontFamily: '"Paper Mono", ui-monospace, monospace',
-              fontSize: 35,
-              color: 'rgba(255, 255, 255, 0.6)',
-              x: 0,
-              y: 0,
-            },
             title: {
               text: 'Post Title',
-              fontFamily: '"IBM Plex Sans", sans-serif',
               fontSize: 87,
               color: '#31E8FF',
               x: 0,
@@ -43,7 +26,39 @@ export function RemotionRoot() {
             },
             subtitle: {
               text: 'One line about what you will learn',
-              fontFamily: '"IBM Plex Sans", sans-serif',
+              fontSize: 53,
+              color: '#F7F7F7',
+              x: 0,
+              y: 0,
+            },
+            media: {
+              x: 0,
+              y: 0,
+              scale: 1,
+            },
+          },
+        }}
+        fps={CAROUSEL_FPS}
+        durationInFrames={COVER_PREVIEW_FRAMES}
+        width={CAROUSEL_SIZE.width}
+        height={CAROUSEL_SIZE.height}
+      />
+      <Composition
+        id="cover-all-zh"
+        component={CoverGallery}
+        defaultProps={{
+          lang: 'zh',
+          layers: {
+            background: 'drift',
+            title: {
+              text: 'View Transitions 入門',
+              fontSize: 87,
+              color: '#31E8FF',
+              x: 0,
+              y: 0,
+            },
+            subtitle: {
+              text: '用幾行 CSS 做出頁面切換動畫',
               fontSize: 53,
               color: '#F7F7F7',
               x: 0,
@@ -68,25 +83,8 @@ export function RemotionRoot() {
           layers: {
             background: 'drift',
             coverLayout: 'stack',
-            logo: {
-              text: '.W',
-              fontFamily: '"Avenir Next Condensed", sans-serif',
-              fontSize: 85,
-              color: '#D9DCE3',
-              x: 0,
-              y: 0,
-            },
-            footer: {
-              text: '@this.web',
-              fontFamily: '"Paper Mono", ui-monospace, monospace',
-              fontSize: 35,
-              color: 'rgba(255, 255, 255, 0.6)',
-              x: 0,
-              y: 0,
-            },
             title: {
               text: 'Post Title',
-              fontFamily: '"IBM Plex Sans", sans-serif',
               fontSize: 87,
               color: '#31E8FF',
               x: 0,
@@ -94,7 +92,6 @@ export function RemotionRoot() {
             },
             subtitle: {
               text: 'One line about what you will learn',
-              fontFamily: '"IBM Plex Sans", sans-serif',
               fontSize: 53,
               color: '#F7F7F7',
               x: 0,
@@ -119,25 +116,8 @@ export function RemotionRoot() {
           layers: {
             background: 'drift',
             coverLayout: 'split',
-            logo: {
-              text: '.W',
-              fontFamily: '"Avenir Next Condensed", sans-serif',
-              fontSize: 85,
-              color: '#D9DCE3',
-              x: 0,
-              y: 0,
-            },
-            footer: {
-              text: '@this.web',
-              fontFamily: '"Paper Mono", ui-monospace, monospace',
-              fontSize: 35,
-              color: 'rgba(255, 255, 255, 0.6)',
-              x: 0,
-              y: 0,
-            },
             title: {
               text: 'Post Title',
-              fontFamily: '"IBM Plex Sans", sans-serif',
               fontSize: 120,
               color: '#31E8FF',
               x: 0,
@@ -145,7 +125,6 @@ export function RemotionRoot() {
             },
             subtitle: {
               text: 'One line about what you will learn',
-              fontFamily: '"IBM Plex Sans", sans-serif',
               fontSize: 96,
               color: '#F7F7F7',
               x: 0,
@@ -170,25 +149,8 @@ export function RemotionRoot() {
           layers: {
             background: 'drift',
             coverLayout: 'caption',
-            logo: {
-              text: '.W',
-              fontFamily: '"Avenir Next Condensed", sans-serif',
-              fontSize: 85,
-              color: '#D9DCE3',
-              x: 0,
-              y: 0,
-            },
-            footer: {
-              text: '@this.web',
-              fontFamily: '"Paper Mono", ui-monospace, monospace',
-              fontSize: 35,
-              color: 'rgba(255, 255, 255, 0.6)',
-              x: 0,
-              y: 0,
-            },
             title: {
               text: 'Post Title',
-              fontFamily: '"IBM Plex Sans", sans-serif',
               fontSize: 72,
               color: '#31E8FF',
               x: 0,
@@ -196,7 +158,6 @@ export function RemotionRoot() {
             },
             subtitle: {
               text: 'One line about what you will learn',
-              fontFamily: '"IBM Plex Sans", sans-serif',
               fontSize: 32,
               color: '#F7F7F7',
               x: 0,
@@ -221,25 +182,8 @@ export function RemotionRoot() {
           layers: {
             background: 'drift',
             coverLayout: 'poster',
-            logo: {
-              text: '.W',
-              fontFamily: '"Avenir Next Condensed", sans-serif',
-              fontSize: 85,
-              color: '#D9DCE3',
-              x: 0,
-              y: 0,
-            },
-            footer: {
-              text: '@this.web',
-              fontFamily: '"Paper Mono", ui-monospace, monospace',
-              fontSize: 35,
-              color: 'rgba(255, 255, 255, 0.6)',
-              x: 0,
-              y: 0,
-            },
             title: {
               text: 'Post Title',
-              fontFamily: '"IBM Plex Sans", sans-serif',
               fontSize: 160,
               color: '#31E8FF',
               x: 0,
@@ -247,7 +191,6 @@ export function RemotionRoot() {
             },
             subtitle: {
               text: 'One line about what you will learn',
-              fontFamily: '"IBM Plex Sans", sans-serif',
               fontSize: 40,
               color: '#F7F7F7',
               x: 0,
@@ -265,6 +208,107 @@ export function RemotionRoot() {
         width={CAROUSEL_SIZE.width}
         height={CAROUSEL_SIZE.height}
       />
+      <Folder name="backgrounds">
+        <Composition
+          id="cover-bg-drift"
+          component={CoverPreview}
+          defaultProps={{
+            layers: {
+              background: 'drift',
+              coverLayout: 'stack',
+              title: {
+                text: 'Post Title',
+                fontSize: 87,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              subtitle: {
+                text: 'One line about what you will learn',
+                fontSize: 53,
+                color: '#F7F7F7',
+                x: 0,
+                y: 0,
+              },
+              media: {
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+            },
+          }}
+          fps={CAROUSEL_FPS}
+          durationInFrames={COVER_PREVIEW_FRAMES}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="cover-bg-grid"
+          component={CoverPreview}
+          defaultProps={{
+            layers: {
+              background: 'grid',
+              coverLayout: 'stack',
+              title: {
+                text: 'Post Title',
+                fontSize: 87,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              subtitle: {
+                text: 'One line about what you will learn',
+                fontSize: 53,
+                color: '#F7F7F7',
+                x: 0,
+                y: 0,
+              },
+              media: {
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+            },
+          }}
+          fps={CAROUSEL_FPS}
+          durationInFrames={COVER_PREVIEW_FRAMES}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="cover-bg-code"
+          component={CoverPreview}
+          defaultProps={{
+            layers: {
+              background: 'code',
+              coverLayout: 'stack',
+              title: {
+                text: 'Post Title',
+                fontSize: 87,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              subtitle: {
+                text: 'One line about what you will learn',
+                fontSize: 53,
+                color: '#F7F7F7',
+                x: 0,
+                y: 0,
+              },
+              media: {
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+            },
+          }}
+          fps={CAROUSEL_FPS}
+          durationInFrames={COVER_PREVIEW_FRAMES}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+      </Folder>
     </Folder>
   );
 }
