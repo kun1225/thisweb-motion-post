@@ -20,10 +20,31 @@ export type CarouselMediaLayer = {
   ratio?: number;
 };
 
+export type CarouselBackgroundVariant =
+  'drift' | 'breathe' | 'aurora' | 'sway' | 'sheen';
+
+export type CarouselCoverLayout = 'stack' | 'split' | 'caption' | 'poster';
+
 export type CarouselLayerSettings = {
+  /** Cover slides only; other slides use the static background. */
+  background?: CarouselBackgroundVariant;
+  /** Cover slides only. */
+  coverLayout?: CarouselCoverLayout;
+  logo?: CarouselTextLayer;
+  footer: CarouselTextLayer;
   title: CarouselTextLayer;
   subtitle?: CarouselTextLayer;
   media?: CarouselMediaLayer;
+};
+
+export type CarouselCoverProps = {
+  slide: Extract<CarouselSlide, { layout: 'cover' }>;
+  layers: CarouselLayerSettings;
+  renderClip: CarouselPost['renderClip'];
+};
+
+export type CarouselBrandingProps = {
+  settings: CarouselTextLayer | undefined;
 };
 
 export type CarouselCompositionProps = {
