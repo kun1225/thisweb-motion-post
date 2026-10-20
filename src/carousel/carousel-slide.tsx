@@ -9,6 +9,8 @@ import {
 } from 'remotion';
 
 import type {
+  CarouselCoverLayout,
+  CarouselCoverProps,
   CarouselLang,
   CarouselLayerSettings,
   CarouselMedia,
@@ -17,6 +19,11 @@ import type {
   CarouselSlide,
   CarouselTextLayer,
 } from './carousel.type';
+import {
+  CarouselAnimatedBackground,
+  CarouselBackground,
+  DEFAULT_BACKGROUND_VARIANT,
+} from './carousel-background';
 
 export const CAROUSEL_SIZE = { width: 1080, height: 1350 };
 export const CAROUSEL_FPS = 30;
@@ -29,12 +36,17 @@ const COLOR = {
   muted: '#C4C4C4',
   card: 'rgba(0, 0, 0, 0.25)',
 };
-const BACKGROUND =
-  'linear-gradient(160deg, #31313D 0%, #24242E 45%, #0D2934 100%)';
 const MONO = '"Paper Mono", ui-monospace, monospace';
-const FONT: Record<CarouselLang, string> = {
-  en: '"IBM Plex Sans", sans-serif',
-  zh: '"LINE Seed TW_TTF", "LINE Seed TW", sans-serif',
+// The Latin font comes first in zh too, so English words in Chinese text match the en slides.
+const FONT: Record<CarouselLang, { sans: string; serif: string }> = {
+  en: {
+    sans: '"IBM Plex Sans", sans-serif',
+    serif: '"Source Serif 4", serif',
+  },
+  zh: {
+    sans: '"IBM Plex Sans", "Noto Sans TC", sans-serif',
+    serif: '"Source Serif 4", "Noto Serif TC", serif',
+  },
 };
 const PAD_X = 110;
 const CONTENT_WIDTH = CAROUSEL_SIZE.width - PAD_X * 2;
@@ -54,13 +66,24 @@ export function CarouselSlideView({
   return (
     <AbsoluteFill
       style={{
-        background: BACKGROUND,
         color: COLOR.text,
-        fontFamily: FONT[lang],
+        fontFamily: FONT[lang].sans,
       }}
     >
+      {slide.layout === 'cover' ? (
+        <CarouselAnimatedBackground
+          variant={layers.background ?? DEFAULT_BACKGROUND_VARIANT}
+        />
+      ) : (
+        <CarouselBackground />
+      )}
       {slide.layout === 'cover' && (
-        <CarouselCover slide={slide} layers={layers} renderClip={renderClip} />
+        <CarouselCover
+          slide={slide}
+          lang={lang}
+          layers={layers}
+          renderClip={renderClip}
+        />
       )}
       {slide.layout === 'content' && (
         <CarouselContent
@@ -89,59 +112,229 @@ export function carouselSlideDuration(slide: CarouselSlide) {
 }
 
 // *** CarouselCover ***
-function CarouselCover({
-  slide,
-  layers,
-  renderClip,
-}: {
-  slide: Extract<CarouselSlide, { layout: 'cover' }>;
-  layers: CarouselLayerSettings;
-  renderClip: CarouselPost['renderClip'];
-}) {
+function CarouselCover(props: CarouselCoverProps) {
+  const layout = props.layers.coverLayout ?? 'stack';
+  const Layout = COVER_LAYOUTS[layout];
+  if (Layout === undefined) {
+    throw new Error(
+      `Unknown cover layout "${layout}". Use one of: ${Object.keys(COVER_LAYOUTS).join(', ')}.`,
+    );
+  }
+  return <Layout {...props} />;
+}
+
+/** Each layout's own text sizes; a slide's `layers` values override them. */
+export const COVER_TEXT_SIZE: Record<
+  CarouselCoverLayout,
+  { title: number; subtitle: number }
+> = {
+  stack: { title: 87, subtitle: 53 },
+  split: { title: 120, subtitle: 96 },
+  caption: { title: 72, subtitle: 32 },
+  poster: { title: 160, subtitle: 40 },
+};
+
+export const CAROUSEL_COVER_LAYOUTS = Object.keys(
+  COVER_TEXT_SIZE,
+) as CarouselCoverLayout[];
+
+// Ends well above the footer, so long titles wrap instead of overlapping it.
+const COVER_INSET = `150px ${PAD_X}px 280px`;
+
+const COVER_LAYOUTS: Record<
+  CarouselCoverLayout,
+  (props: CarouselCoverProps) => ReactNode
+> = {
+  stack: CoverStack,
+  split: CoverSplit,
+  caption: CoverCaption,
+  poster: CoverPoster,
+};
+
+/** Subtitle and title centred at the top, media below. */
+function CoverStack({ slide, lang, layers, renderClip }: CarouselCoverProps) {
   return (
     <>
-      <CarouselLogo />
       <div
         style={{
           position: 'absolute',
-          top: 250,
+          top: 170,
           left: 0,
           right: 0,
           textAlign: 'center',
         }}
       >
-        <Sequence name="Subtitle" layout="none">
-          <div
-            style={{
-              fontSize: 53,
-              color: '#F7F7F7',
-              ...carouselTextStyle(layers.subtitle),
-            }}
-          >
-            {slide.subtitle}
-          </div>
-        </Sequence>
-        <Sequence name="Title" layout="none">
-          <div
-            style={{
-              marginTop: 28,
-              fontSize: 87,
-              fontWeight: 700,
-              color: COLOR.title,
-              ...carouselTextStyle(layers.title),
-            }}
-          >
-            {slide.title}
-          </div>
-        </Sequence>
+        <CoverText
+          name="Subtitle"
+          settings={layers.subtitle}
+          style={{ fontSize: COVER_TEXT_SIZE.stack.subtitle, color: '#F7F7F7' }}
+        >
+          {slide.subtitle}
+        </CoverText>
+        <CoverText
+          name="Title"
+          settings={layers.title}
+          style={{
+            marginTop: 28,
+            fontSize: COVER_TEXT_SIZE.stack.title,
+            fontFamily: FONT[lang].serif,
+            fontWeight: 600,
+            color: COLOR.title,
+          }}
+        >
+          {slide.title}
+        </CoverText>
       </div>
       <CarouselMediaBox
         media={slide.media}
         settings={layers.media}
         renderClip={renderClip}
-        style={{ top: 560, bottom: 170 }}
+        style={{ top: 480, bottom: 250 }}
       />
     </>
+  );
+}
+
+/** Title at the top left, subtitle at the bottom right. Text only. */
+function CoverSplit({ slide, lang, layers }: CarouselCoverProps) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        inset: COVER_INSET,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+      }}
+    >
+      <CoverText
+        name="Title"
+        settings={layers.title}
+        style={{
+          fontSize: COVER_TEXT_SIZE.split.title,
+          lineHeight: 1.05,
+          fontFamily: FONT[lang].serif,
+          fontWeight: 600,
+          color: COLOR.title,
+        }}
+      >
+        {slide.title}
+      </CoverText>
+      <CoverText
+        name="Subtitle"
+        settings={layers.subtitle}
+        style={{
+          fontSize: COVER_TEXT_SIZE.split.subtitle,
+          lineHeight: 1.1,
+          fontWeight: 300,
+          textAlign: 'right',
+        }}
+      >
+        {slide.subtitle}
+      </CoverText>
+    </div>
+  );
+}
+
+/** Title at the top, media in the middle, subtitle as a small caption. All centred. */
+function CoverCaption({ slide, lang, layers, renderClip }: CarouselCoverProps) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        inset: COVER_INSET,
+        display: 'flex',
+        flexDirection: 'column',
+        textAlign: 'center',
+      }}
+    >
+      <CoverText
+        name="Title"
+        settings={layers.title}
+        style={{
+          fontSize: COVER_TEXT_SIZE.caption.title,
+          lineHeight: 1.15,
+          fontFamily: FONT[lang].serif,
+          fontWeight: 600,
+          color: COLOR.title,
+        }}
+      >
+        {slide.title}
+      </CoverText>
+      <CarouselMediaBox
+        media={slide.media}
+        settings={layers.media}
+        renderClip={renderClip}
+        style={{ position: 'relative', flex: 1, marginTop: 64 }}
+      />
+      <CoverText
+        name="Subtitle"
+        settings={layers.subtitle}
+        style={{
+          marginTop: 56,
+          fontSize: COVER_TEXT_SIZE.caption.subtitle,
+          textWrap: 'balance',
+          textTransform: 'uppercase',
+          letterSpacing: '0.08em',
+        }}
+      >
+        {slide.subtitle}
+      </CoverText>
+    </div>
+  );
+}
+
+/** A large title pushed to the bottom left, subtitle as a small label above it. Text only. */
+function CoverPoster({ slide, lang, layers }: CarouselCoverProps) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        inset: COVER_INSET,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+      }}
+    >
+      <CoverText
+        name="Subtitle"
+        settings={layers.subtitle}
+        style={{ marginBottom: 40, fontSize: COVER_TEXT_SIZE.poster.subtitle }}
+      >
+        {slide.subtitle}
+      </CoverText>
+      <CoverText
+        name="Title"
+        settings={layers.title}
+        style={{
+          fontSize: COVER_TEXT_SIZE.poster.title,
+          lineHeight: 1.02,
+          fontFamily: FONT[lang].serif,
+          fontWeight: 600,
+          color: COLOR.title,
+        }}
+      >
+        {slide.title}
+      </CoverText>
+    </div>
+  );
+}
+
+function CoverText({
+  name,
+  settings,
+  style,
+  children,
+}: {
+  name: string;
+  settings?: CarouselTextLayer;
+  style?: CSSProperties;
+  children: ReactNode;
+}) {
+  return (
+    <Sequence name={name} layout="none">
+      <div style={{ ...style, ...carouselTextStyle(settings) }}>{children}</div>
+    </Sequence>
   );
 }
 
@@ -389,7 +582,8 @@ function carouselTextStyle(settings?: CarouselTextLayer): CSSProperties {
   if (!settings) return {};
 
   return {
-    fontFamily: settings.fontFamily,
+    // An unset font must not erase the layout's font when spread over it.
+    ...(settings.fontFamily && { fontFamily: settings.fontFamily }),
     fontSize: settings.fontSize,
     color: settings.color,
     translate: `${settings.x}px ${settings.y}px`,
@@ -422,28 +616,8 @@ function CarouselRichText({ text }: { text: string }) {
   );
 }
 
-// *** CarouselLogo ***
-function CarouselLogo() {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        left: 84,
-        top: 70,
-        // Closest local match to the Canva logo's light condensed face.
-        fontFamily: '"Avenir Next Condensed", sans-serif',
-        fontWeight: 200,
-        fontSize: 85,
-        letterSpacing: -2,
-        color: '#D9DCE3',
-      }}
-    >
-      .W
-    </div>
-  );
-}
-
 // *** CarouselFooter ***
+// Not a layer, so the brand looks the same on every post.
 function CarouselFooter() {
   return (
     <div
@@ -454,7 +628,7 @@ function CarouselFooter() {
         right: 0,
         textAlign: 'center',
         fontFamily: MONO,
-        fontSize: 35,
+        fontSize: 32,
         color: 'rgba(255, 255, 255, 0.6)',
       }}
     >
