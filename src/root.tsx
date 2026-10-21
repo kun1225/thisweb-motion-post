@@ -61,7 +61,7 @@ export function RemotionRoot() {
               motion: {
                 art: 'points',
                 position: 'center',
-                color: '#F9FAFB',
+                color: '#E5E7EB',
                 boil: 2.5,
                 strokeWidth: 3,
               },
@@ -87,10 +87,10 @@ export function RemotionRoot() {
             layers: {
               motion: {
                 art: 'verify',
-                position: 'center',
-                color: '#F9FAFB',
+                position: 'top',
+                color: '#E5E7EB',
                 boil: 2.5,
-                strokeWidth: 3,
+                strokeWidth: 4,
               },
               title: {
                 text: '1. 開 PR 前，先讓 AI 驗證過',
@@ -115,7 +115,7 @@ export function RemotionRoot() {
               motion: {
                 art: 'layers',
                 position: 'right',
-                color: '#F9FAFB',
+                color: '#E5E7EB',
                 boil: 2.5,
                 strokeWidth: 3,
               },
@@ -142,7 +142,7 @@ export function RemotionRoot() {
               motion: {
                 art: 'risk',
                 position: 'center',
-                color: '#F9FAFB',
+                color: '#E5E7EB',
                 boil: 2.5,
                 strokeWidth: 3,
               },
@@ -168,10 +168,10 @@ export function RemotionRoot() {
             layers: {
               motion: {
                 art: 'loop',
-                position: 'center',
-                color: '#F9FAFB',
+                position: 'full',
+                color: '#E5E7EB',
                 boil: 2.5,
-                strokeWidth: 3,
+                strokeWidth: 5,
               },
               title: {
                 text: '4. 避免 AI 互審反覆修改',
@@ -195,10 +195,10 @@ export function RemotionRoot() {
             layers: {
               motion: {
                 art: 'learn',
-                position: 'center',
-                color: '#F9FAFB',
+                position: 'top',
+                color: '#E5E7EB',
                 boil: 2.5,
-                strokeWidth: 3,
+                strokeWidth: 4,
               },
               title: {
                 text: '5. 搜集造成錯誤的原因，讓 AI 學習',
@@ -223,7 +223,7 @@ export function RemotionRoot() {
               motion: {
                 art: 'direction',
                 position: 'center',
-                color: '#F9FAFB',
+                color: '#E5E7EB',
                 boil: 2.5,
                 strokeWidth: 3,
               },
@@ -249,7 +249,7 @@ export function RemotionRoot() {
             layers: {
               motion: {
                 art: 'reply',
-                color: '#F9FAFB',
+                color: '#E5E7EB',
                 boil: 2.5,
                 strokeWidth: 3,
               },

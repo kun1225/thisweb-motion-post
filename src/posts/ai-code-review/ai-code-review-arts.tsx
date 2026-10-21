@@ -197,52 +197,94 @@ function Person({ x }: { x: number }) {
 }
 
 // *** LoopArt ***
-const ORBIT = { x: 300, y: 200, r: 120, laps: 3 };
-const EXIT = { from: ORBIT.x, to: 740, y: ORBIT.y - ORBIT.r };
+// The slide's own size, so on a `full` slide the path can run round the text instead of over it.
+const LOOP = { width: 1080, height: 1350, x: 130, y: 230, r: 80, step: 34 };
+const LOOP_LAPS = 3;
+const LOOP_EXIT = { x: 1010, turn: 110, end: 1180 };
+const LOOP_POINTS = loopPoints();
+const LOOP_LENGTHS = runningLengths(LOOP_POINTS);
+const LOOP_PATH = `M ${LOOP_POINTS.map(({ x, y }) => `${x.toFixed(1)} ${y.toFixed(1)}`).join(' L ')}`;
 
-/** A review goes round three times, then breaks out in a new direction. */
-function LoopArt({ progress, color, ...props }: CarouselLineArtProps) {
-  const lap = ramp(progress, 0.04, 0.58) * ORBIT.laps;
-  const exit = ramp(progress, 0.6, 0.8);
-  const fade = 1 - ramp(progress, 0.88, 0.97);
-  const angle = 2 * Math.PI * lap - Math.PI / 2;
-  const dot =
-    exit > 0
-      ? { x: EXIT.from + exit * (EXIT.to - EXIT.from), y: EXIT.y }
-      : {
-          x: ORBIT.x + ORBIT.r * Math.cos(angle),
-          y: ORBIT.y + ORBIT.r * Math.sin(angle),
-        };
-  const dotOpacity = Math.min(
-    ramp(progress, 0, 0.04),
-    1 - ramp(progress, 0.8, 0.84),
-  );
+/** An arrow loops three times along the top, like three review rounds, then breaks out down to the bottom right. */
+function LoopArt({ progress, ...props }: CarouselLineArtProps) {
+  // The tail chases the head, so the arrow travels instead of piling up, and the slide ends empty.
+  const head = ramp(progress, 0.04, 0.75);
+  const tail = ramp(progress, 0.25, 0.95);
+  const tip = loopPointAt(head);
   return (
-    <ArtSvg {...props} color={color} id="loop" width={860} height={360}>
-      <InkPath d={circlePath(ORBIT.x, ORBIT.y, ORBIT.r)} />
-      <g opacity={fade}>
-        {/* A tally mark for each finished lap. */}
-        {Array.from({ length: ORBIT.laps }, (_, k) => {
-          const x = ORBIT.x + (k - 1) * 30;
-          return (
-            <InkPath
-              key={x}
-              d={`M ${x} ${ORBIT.y - 30} V ${ORBIT.y + 30}`}
-              to={clamp01((lap - k - 0.85) / 0.15)}
-            />
-          );
-        })}
-        <InkPath d={`M ${EXIT.from} ${EXIT.y} H ${EXIT.to}`} to={exit} />
+    <ArtSvg {...props} id="loop" width={LOOP.width} height={LOOP.height}>
+      <InkPath d={LOOP_PATH} from={tail} to={head} />
+      <g opacity={clamp01((1 - tail) * 20)}>
         <InkPath
-          d={`M ${EXIT.to - 28} ${EXIT.y - 24} L ${EXIT.to} ${EXIT.y} L ${EXIT.to - 28} ${EXIT.y + 24}`}
-          to={ramp(progress, 0.78, 0.86)}
+          d="M -30 -22 L 0 0 L -30 22"
+          transform={`translate(${tip.x} ${tip.y}) rotate(${tip.angle})`}
         />
-      </g>
-      <g opacity={dotOpacity}>
-        <Dot x={dot.x} y={dot.y} r={11} color={color} />
       </g>
     </ArtSvg>
   );
+}
+
+type Point = { x: number; y: number };
+
+function loopPoints(): Point[] {
+  const steps = 240;
+  const startX = LOOP.x - LOOP.step * Math.PI;
+  // A stretched cycloid: it rolls forward but swings back at the top of each lap, which draws the loops.
+  const loops = Array.from({ length: steps + 1 }, (_, i) => {
+    const t = Math.PI + (i / steps) * 2 * Math.PI * LOOP_LAPS;
+    return {
+      x: startX + LOOP.step * t - LOOP.r * Math.sin(t),
+      y: LOOP.y - LOOP.r * Math.cos(t),
+    };
+  });
+  const bottom = LOOP.y + LOOP.r;
+  const corner = {
+    x: LOOP_EXIT.x - LOOP_EXIT.turn,
+    y: bottom + LOOP_EXIT.turn,
+  };
+  const bend = Array.from({ length: 13 }, (_, i) => {
+    const angle = -Math.PI / 2 + (i / 12) * (Math.PI / 2);
+    return {
+      x: corner.x + LOOP_EXIT.turn * Math.cos(angle),
+      y: corner.y + LOOP_EXIT.turn * Math.sin(angle),
+    };
+  });
+  return [
+    { x: -60, y: bottom },
+    ...loops,
+    ...bend,
+    { x: LOOP_EXIT.x, y: LOOP_EXIT.end },
+  ];
+}
+
+function runningLengths(points: Point[]) {
+  return points.reduce<number[]>((lengths, point, i) => {
+    const before = points[i - 1] ?? point;
+    const total = lengths[i - 1] ?? 0;
+    return [
+      ...lengths,
+      total + Math.hypot(point.x - before.x, point.y - before.y),
+    ];
+  }, []);
+}
+
+/** Where the head is at `at` (0 to 1 along the path), and which way it points in degrees. */
+function loopPointAt(at: number) {
+  const total = LOOP_LENGTHS[LOOP_LENGTHS.length - 1] ?? 0;
+  const length = at * total;
+  const i = Math.max(
+    LOOP_LENGTHS.findIndex((value) => value >= length),
+    1,
+  );
+  const a = LOOP_POINTS[i - 1] ?? { x: 0, y: 0 };
+  const b = LOOP_POINTS[i] ?? a;
+  const start = LOOP_LENGTHS[i - 1] ?? 0;
+  const share = (length - start) / ((LOOP_LENGTHS[i] ?? start) - start || 1);
+  return {
+    x: a.x + (b.x - a.x) * share,
+    y: a.y + (b.y - a.y) * share,
+    angle: (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI,
+  };
 }
 
 // *** LearnArt ***

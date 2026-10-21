@@ -34,7 +34,7 @@ export const AI_CODE_REVIEW_SLIDES: Record<CarouselLang, CarouselSlide[]> = {
     {
       layout: 'text-motion',
       title: '4. 避免 AI 互審反覆修改',
-      body: 'Anthropic 曾有一個 PR，來回審查、修改超過 **50 輪**。\n\n所以現在**三輪後**就要重新評估方向，後續審查聚焦新改動，避免重複提出相同問題。',
+      body: 'Anthropic 曾有一個 PR，來回審查、修改超過 **50 輪**。\n\n所以現在**三輪後**就要重新評估方向，避免重複提出相同問題。',
     },
     {
       layout: 'text-motion',
