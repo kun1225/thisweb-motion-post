@@ -20,8 +20,8 @@ import type {
   CarouselTextLayer,
 } from './carousel.type';
 import {
+  CONTENT_BACKGROUND_VARIANT,
   CarouselAnimatedBackground,
-  CarouselBackground,
   DEFAULT_BACKGROUND_VARIANT,
 } from './carousel-background';
 import { CarouselList } from './carousel-list';
@@ -67,13 +67,13 @@ export function CarouselSlideView({
         fontFamily: FONT[lang].sans,
       }}
     >
-      {slide.layout === 'cover' ? (
-        <CarouselAnimatedBackground
-          variant={layers.background ?? DEFAULT_BACKGROUND_VARIANT}
-        />
-      ) : (
-        <CarouselBackground />
-      )}
+      <CarouselAnimatedBackground
+        variant={
+          slide.layout === 'cover'
+            ? (layers.background ?? DEFAULT_BACKGROUND_VARIANT)
+            : CONTENT_BACKGROUND_VARIANT
+        }
+      />
       {slide.layout === 'cover' && (
         <CarouselCover
           slide={slide}
@@ -173,6 +173,7 @@ function CoverStack({ slide, lang, layers, renderClip }: CarouselCoverProps) {
           left: 0,
           right: 0,
           textAlign: 'center',
+          textWrap: 'balance',
         }}
       >
         <CoverText
@@ -257,6 +258,7 @@ function CoverCaption({ slide, lang, layers, renderClip }: CarouselCoverProps) {
         display: 'flex',
         flexDirection: 'column',
         textAlign: 'center',
+        textWrap: 'balance',
       }}
     >
       <CoverText
@@ -284,7 +286,6 @@ function CoverCaption({ slide, lang, layers, renderClip }: CarouselCoverProps) {
         style={{
           marginTop: 56,
           fontSize: COVER_TEXT_SIZE.caption.subtitle,
-          textWrap: 'balance',
           textTransform: 'uppercase',
           letterSpacing: '0.08em',
         }}

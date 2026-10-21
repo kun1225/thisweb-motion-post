@@ -58,12 +58,12 @@ export function CarouselMotion({
         justifyContent: 'center',
         gap: 80,
         textAlign: 'center',
+        textWrap: 'balance',
       }}
     >
       <CarouselTitle
         settings={layers.title}
         style={{
-          textWrap: 'balance',
           // Without it, zh lines break in the middle of a word.
           wordBreak: lang === 'zh' ? 'keep-all' : undefined,
         }}
@@ -199,11 +199,10 @@ function TextMotionFull({ slide, layers, art }: CarouselTextMotionLayoutProps) {
           flexDirection: 'column',
           justifyContent: 'center',
           textAlign: 'center',
+          textWrap: 'balance',
         }}
       >
-        <CarouselTitle settings={layers.title} style={{ textWrap: 'balance' }}>
-          {slide.title}
-        </CarouselTitle>
+        <CarouselTitle settings={layers.title}>{slide.title}</CarouselTitle>
         <CarouselBody text={slide.body} />
       </div>
       <Sequence name="Motion" layout="none">

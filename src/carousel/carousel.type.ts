@@ -68,7 +68,7 @@ export type CarouselTextMotionLayoutProps = {
 };
 
 export type CarouselLayerSettings = {
-  /** Cover slides only; other slides use the static background. */
+  /** Cover slides only; other slides always use `drift`. */
   background?: CarouselBackgroundVariant;
   /** Cover slides only. */
   coverLayout?: CarouselCoverLayout;

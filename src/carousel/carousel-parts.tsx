@@ -85,7 +85,15 @@ export function CarouselBody({ text }: { text: string }) {
         whiteSpace: 'pre-line',
       }}
     >
-      <CarouselRichText text={text} />
+      {/* Chrome balances only one paragraph of a block, so each paragraph is its own block. */}
+      {text.split('\n\n').map((paragraph, i) => (
+        <span
+          key={i}
+          style={{ display: 'block', marginTop: i === 0 ? 0 : '1.6em' }}
+        >
+          <CarouselRichText text={paragraph} />
+        </span>
+      ))}
     </p>
   );
 }

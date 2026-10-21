@@ -7,12 +7,10 @@ import type {
 } from './carousel.type';
 
 export const DEFAULT_BACKGROUND_VARIANT: CarouselBackgroundVariant = 'drift';
+// Grid and code would fight the slide's own text and line art, so content slides only get the soft glow.
+export const CONTENT_BACKGROUND_VARIANT: CarouselBackgroundVariant = 'drift';
 
-export function CarouselBackground() {
-  return <AbsoluteFill style={{ background: STILL }} />;
-}
-
-/** One full cycle per slide, so the cover video loops on Instagram without a jump. */
+/** One full cycle per slide, so the video loops on Instagram without a jump. */
 export function CarouselAnimatedBackground({
   variant,
 }: {
