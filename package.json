@@ -3,12 +3,14 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "remotion studio src/index.ts",
     "studio": "remotion studio src/index.ts",
     "render": "./scripts/render-post.sh",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@remotion/cli": "4.0.535",
+    "lucide-react": "1.60.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "remotion": "4.0.535"

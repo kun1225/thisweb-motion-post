@@ -18,6 +18,7 @@ export function CarouselComposition(props: CarouselCompositionProps) {
       lang={lang}
       layers={props.layers}
       renderClip={post.renderClip}
+      arts={post.arts}
     />
   );
 }
@@ -50,7 +51,10 @@ function resolveCarouselComposition(
   if (slide.layout === 'cover' && layers.subtitle) {
     slide.subtitle = layers.subtitle.text;
   }
-  if (slide.layout !== 'list' && slide.media.kind === 'video') {
+  if (slide.layout === 'motion' && layers.subtitle) {
+    slide.caption = layers.subtitle.text;
+  }
+  if ('media' in slide && slide.media.kind === 'video') {
     slide.media = {
       ...slide.media,
       file: layers.media?.file ?? slide.media.file,

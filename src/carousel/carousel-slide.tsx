@@ -1,4 +1,3 @@
-import { Fragment } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import {
   AbsoluteFill,
@@ -24,44 +23,41 @@ import {
   CarouselBackground,
   DEFAULT_BACKGROUND_VARIANT,
 } from './carousel-background';
+import { CarouselList } from './carousel-list';
+import {
+  CAROUSEL_MOTION_FRAMES,
+  CarouselMotion,
+  CarouselTextMotion,
+} from './carousel-motion';
+import {
+  COLOR,
+  CONTENT_WIDTH,
+  CarouselBody,
+  CarouselColumn,
+  CarouselFooter,
+  CarouselRichText,
+  CarouselTitle,
+  FONT,
+  PAD_X,
+  carouselTextStyle,
+} from './carousel-parts';
 
-export const CAROUSEL_SIZE = { width: 1080, height: 1350 };
+export { CAROUSEL_SIZE } from './carousel-parts';
 export const CAROUSEL_FPS = 30;
 
-// Matches the ThisWeb carousel template in Canva.
-const COLOR = {
-  title: '#31E8FF',
-  highlight: '#F0893C',
-  text: '#F9FAFB',
-  muted: '#C4C4C4',
-  card: 'rgba(0, 0, 0, 0.25)',
-};
-const MONO = '"Paper Mono", ui-monospace, monospace';
-// The Latin font comes first in zh too, so English words in Chinese text match the en slides.
-const FONT: Record<CarouselLang, { sans: string; serif: string }> = {
-  en: {
-    sans: '"IBM Plex Sans", sans-serif',
-    serif: '"Source Serif 4", serif',
-  },
-  zh: {
-    sans: '"IBM Plex Sans", "Noto Sans TC", sans-serif',
-    serif: '"Source Serif 4", "Noto Serif TC", serif',
-  },
-};
-const PAD_X = 110;
-const CONTENT_WIDTH = CAROUSEL_SIZE.width - PAD_X * 2;
-
-/** One ThisWeb carousel slide. Text never animates; only the media plays. */
+/** One ThisWeb carousel slide. Text never animates; only the media and line art move. */
 export function CarouselSlideView({
   slide,
   lang,
   layers,
   renderClip,
+  arts,
 }: {
   slide: CarouselSlide;
   lang: CarouselLang;
   layers: CarouselLayerSettings;
   renderClip: CarouselPost['renderClip'];
+  arts?: CarouselPost['arts'];
 }) {
   return (
     <AbsoluteFill
@@ -93,10 +89,16 @@ export function CarouselSlideView({
         />
       )}
       {slide.layout === 'list' && (
-        <CarouselList slide={slide} layers={layers} renderClip={renderClip} />
+        <CarouselList slide={slide} layers={layers} />
       )}
       {slide.layout === 'result' && (
         <CarouselResult slide={slide} layers={layers} renderClip={renderClip} />
+      )}
+      {slide.layout === 'motion' && (
+        <CarouselMotion slide={slide} lang={lang} layers={layers} arts={arts} />
+      )}
+      {slide.layout === 'text-motion' && (
+        <CarouselTextMotion slide={slide} layers={layers} arts={arts} />
       )}
       <CarouselFooter />
     </AbsoluteFill>
@@ -105,7 +107,10 @@ export function CarouselSlideView({
 
 /** A slide lasts as long as its media, so it plays without a jump. One frame means a still. */
 export function carouselSlideDuration(slide: CarouselSlide) {
-  const media = slide.layout === 'list' ? null : slide.media;
+  if (slide.layout === 'motion' || slide.layout === 'text-motion') {
+    return CAROUSEL_MOTION_FRAMES;
+  }
+  const media = 'media' in slide ? slide.media : null;
   if (media?.kind === 'video') return media.frames;
   if (media?.kind === 'clip') return media.frames * media.loops;
   return 1;
@@ -351,78 +356,13 @@ function CarouselContent({
   return (
     <CarouselColumn>
       <CarouselTitle settings={layers.title}>{slide.title}</CarouselTitle>
-      <p
-        style={{
-          margin: '36px 0 0',
-          fontSize: 40,
-          lineHeight: 1.6,
-          whiteSpace: 'pre-line',
-        }}
-      >
-        <CarouselRichText text={slide.body} />
-      </p>
+      <CarouselBody text={slide.body} />
       <CarouselMediaBox
         media={slide.media}
         settings={layers.media}
         renderClip={renderClip}
         style={{ position: 'relative', flex: 1, marginTop: 56 }}
       />
-    </CarouselColumn>
-  );
-}
-
-// *** CarouselList ***
-function CarouselList({
-  slide,
-  layers,
-}: {
-  slide: Extract<CarouselSlide, { layout: 'list' }>;
-  layers: CarouselLayerSettings;
-  renderClip: CarouselPost['renderClip'];
-}) {
-  return (
-    <CarouselColumn>
-      <CarouselTitle settings={layers.title}>{slide.title}</CarouselTitle>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 24,
-          marginTop: 64,
-        }}
-      >
-        {slide.items.map((item) => (
-          <div
-            key={item.letter}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 40,
-              padding: '36px 44px',
-              borderRadius: 16,
-              backgroundColor: COLOR.card,
-            }}
-          >
-            <span
-              style={{
-                width: 72,
-                fontFamily: MONO,
-                fontSize: 96,
-                lineHeight: 1,
-                color: COLOR.title,
-              }}
-            >
-              {item.letter}
-            </span>
-            <div>
-              <div style={{ fontSize: 40, fontWeight: 700 }}>{item.name}</div>
-              <div style={{ marginTop: 8, fontSize: 34, color: COLOR.muted }}>
-                <CarouselRichText text={item.text} />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
     </CarouselColumn>
   );
 }
@@ -465,48 +405,6 @@ function CarouselResult({
         ))}
       </ul>
     </CarouselColumn>
-  );
-}
-
-// *** CarouselColumn ***
-function CarouselColumn({ children }: { children: ReactNode }) {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        inset: `105px ${PAD_X}px 160px`,
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
-// *** CarouselTitle ***
-function CarouselTitle({
-  children,
-  settings,
-}: {
-  children: ReactNode;
-  settings: CarouselTextLayer;
-}) {
-  return (
-    <Sequence name="Title" layout="none">
-      <h1
-        style={{
-          margin: 0,
-          fontSize: 54,
-          lineHeight: 1.3,
-          fontWeight: 700,
-          color: COLOR.title,
-          ...carouselTextStyle(settings),
-        }}
-      >
-        {children}
-      </h1>
-    </Sequence>
   );
 }
 
@@ -575,64 +473,5 @@ function CarouselMediaBox({
         </div>
       </div>
     </Sequence>
-  );
-}
-
-function carouselTextStyle(settings?: CarouselTextLayer): CSSProperties {
-  if (!settings) return {};
-
-  return {
-    // An unset font must not erase the layout's font when spread over it.
-    ...(settings.fontFamily && { fontFamily: settings.fontFamily }),
-    fontSize: settings.fontSize,
-    color: settings.color,
-    translate: `${settings.x}px ${settings.y}px`,
-  };
-}
-
-// *** CarouselRichText ***
-function CarouselRichText({ text }: { text: string }) {
-  const parts = text.split(/(\*\*.+?\*\*|`.+?`)/);
-  return (
-    <>
-      {parts.map((part, index) => {
-        if (part.startsWith('**')) {
-          return (
-            <strong key={index} style={{ color: COLOR.highlight }}>
-              {part.slice(2, -2)}
-            </strong>
-          );
-        }
-        if (part.startsWith('`')) {
-          return (
-            <code key={index} style={{ fontFamily: MONO, fontSize: '0.9em' }}>
-              {part.slice(1, -1)}
-            </code>
-          );
-        }
-        return <Fragment key={index}>{part}</Fragment>;
-      })}
-    </>
-  );
-}
-
-// *** CarouselFooter ***
-// Not a layer, so the brand looks the same on every post.
-function CarouselFooter() {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        bottom: 70,
-        left: 0,
-        right: 0,
-        textAlign: 'center',
-        fontFamily: MONO,
-        fontSize: 32,
-        color: 'rgba(255, 255, 255, 0.6)',
-      }}
-    >
-      @this.web
-    </div>
   );
 }
