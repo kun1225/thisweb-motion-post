@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 
 export type CarouselLang = 'en' | 'zh';
 
@@ -30,12 +30,40 @@ export type CarouselBackgroundProps = {
 
 export type CarouselCoverLayout = 'stack' | 'split' | 'caption' | 'poster';
 
+export type CarouselListLayout = 'icon' | 'cards' | 'ruled' | 'steps';
+
+export type CarouselLineArt = 'draw' | 'turn' | 'field';
+
+export type CarouselMotionLayer = {
+  art: CarouselLineArt;
+  /** `text-motion` slides only. */
+  position?: 'center' | 'right';
+  color: string;
+  /** Hand-drawn wobble in pixels; 0 turns it off. */
+  boil: number;
+  strokeWidth: number;
+};
+
+export type CarouselLineArtProps = Omit<
+  CarouselMotionLayer,
+  'position' | 'art'
+> & {
+  /** 0 at the first frame, approaching 1 at the last. */
+  progress: number;
+  align: 'center' | 'right';
+};
+
 export type CarouselLayerSettings = {
   /** Cover slides only; other slides use the static background. */
   background?: CarouselBackgroundVariant;
   /** Cover slides only. */
   coverLayout?: CarouselCoverLayout;
+  /** List slides only. */
+  listLayout?: CarouselListLayout;
+  /** `motion` and `text-motion` slides only. */
+  motion?: CarouselMotionLayer;
   title: CarouselTextLayer;
+  /** The cover subtitle, or the caption on `motion` slides. */
   subtitle?: CarouselTextLayer;
   media?: CarouselMediaLayer;
 };
@@ -64,14 +92,30 @@ export type CarouselMedia =
   | { kind: 'clip'; id: string; frames: number; loops: number; ratio: number }
   | { kind: 'none' };
 
-export type CarouselListItem = { letter: string; name: string; text: string };
+/** A lucide-react icon, or any component that takes the same props. */
+export type CarouselIcon = ComponentType<{
+  size?: number;
+  color?: string;
+  strokeWidth?: number;
+}>;
+
+export type CarouselListItem = {
+  /** Shown by the `icon` list layout. Without one, it shows the item number. */
+  icon?: CarouselIcon;
+  name: string;
+  text: string;
+};
+
+export type CarouselListSlide = Extract<CarouselSlide, { layout: 'list' }>;
 
 /** Text may use **highlight** and `code`. */
 export type CarouselSlide =
   | { layout: 'cover'; subtitle: string; title: string; media: CarouselMedia }
   | { layout: 'content'; title: string; body: string; media: CarouselMedia }
-  | { layout: 'list'; title: string; items: CarouselListItem[] }
-  | { layout: 'result'; title: string; tips: string[]; media: CarouselMedia };
+  | { layout: 'list'; title: string; body?: string; items: CarouselListItem[] }
+  | { layout: 'result'; title: string; tips: string[]; media: CarouselMedia }
+  | { layout: 'motion'; title: string; caption: string }
+  | { layout: 'text-motion'; title: string; body: string };
 
 export type CarouselPost = {
   /** Kebab-case; also the composition id prefix and the output folder. */

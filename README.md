@@ -1,6 +1,6 @@
 # motion-post
 
-ThisWeb carousel posts for Instagram, built with Remotion. Each post has an English and a Traditional Chinese version. Every slide is 1080×1350. Text stays still; only the media moves.
+ThisWeb carousel posts for Instagram, built with Remotion. Each post has an English and a Traditional Chinese version. Every slide is 1080×1350. Text stays still; only the media and line art move.
 
 ## Commands
 
@@ -20,6 +20,8 @@ Open a slide, press Escape to clear the layer selection, and expand the right si
 - `title` and `subtitle`: text, font size, color, and position. Add `fontFamily` only to override the default font.
 - `background` (cover slides): the background animation. Use `drift` (default; a teal glow moving in a circle), `grid` (a dot grid with a band of light passing through), or `code` (faint code lines scrolling up). Other slides use the static background.
 - `coverLayout` (cover slides): `stack` (default; subtitle and title on top, media below), `split` (title top left, subtitle bottom right, no media), `caption` (title on top, media in the middle, subtitle as a small caption), or `poster` (big title at the bottom left, no media). Raise the title `fontSize` for `split` and `poster`.
+- `listLayout` (list slides): `icon` (default; one card per item with its icon, or its number when it has no icon), `cards` (a bold label on top of each card), `ruled` (no cards; thin lines between rows), or `steps` (numbers on a line, for items that happen in order).
+- `motion` (`motion` and `text-motion` slides): the line art. `art` is `draw` (a pen line draws a square and dot, then wipes them), `turn` (a square makes quarter turns), or `field` (parallel lines with a slow wave). `color` is the line colour, `boil` is the hand-drawn wobble in pixels (0 turns it off), and `strokeWidth` is the line width. On `text-motion` slides, `position` is `right` (default; small art in the bottom right) or `center` (wider art along the bottom).
 - `media`: position and scale. Videos also have a file path, frame count, and aspect ratio.
 
 Positions are offsets in pixels: positive `x` moves right and positive `y` moves down. Video paths are relative to `public/`. At 30 fps, 30 frames equal one second. Changing the frame count updates the slide duration; it does not change the video's playback speed.
@@ -28,20 +30,33 @@ Studio saves edits to that slide's `defaultProps` in `src/root.tsx`. Each compos
 
 ## Structure
 
-- `src/carousel/`: the shared ThisWeb look (background, title, footer, media box) and four layouts:
+- `src/carousel/`: the shared ThisWeb look (background, title, footer, media box) and six layouts:
   - `cover`: subtitle, big title, media
-  - `content`: title, body, media
-  - `list`: title and lettered cards
+  - `content`: title, body, media. With `media: { kind: 'none' }` it is a pure text slide.
+  - `list`: title, optional lead `body`, and items in one of four `listLayout`s
   - `result`: title, media, tip list
+  - `motion`: a short centred statement, line art, and a small `caption`
+  - `text-motion`: title and body, with line art in the space below
 - `src/posts/<post-id>/`: one folder per post. It has the slide text and any animations of its own.
 - `src/posts/index.ts`: the post data and animations used by the compositions.
 - `src/covers/`: sample covers for trying layouts and backgrounds without a real post.
+- `src/layouts/`: sample slides for the other layouts, with the same goal.
 - `src/root.tsx`: one composition per slide, with its saved Studio settings.
 - `public/<post-id>/`: footage the slides play. Git ignores `.mp4` files, so keep the originals in the post's asset folder (in `database/resources/assets/`).
 
 ## Cover previews
 
 The **covers** folder in Studio shows each cover layout with sample text and a dashed placeholder where the media goes. `cover-all` puts all four layouts in one 2×2 grid, and `cover-all-zh` does the same with 繁中 text. Each uses the text from its own `layers` and each layout's own font sizes. `cover-stack`, `cover-split`, `cover-caption`, and `cover-poster` show one layout each, so you can tune it like a real slide.
+
+## Layout previews
+
+The **layouts** folder in Studio shows the other layouts with sample 繁中 text: `content` (a dashed box where the media goes, like `cover-stack`; change `layers.media.ratio` to try other media shapes), `text`, `list-icon`, `list-cards`, `list-ruled`, `list-steps`, `motion`, and `text-motion`. Set `lang` to `en` for the English sample. The title comes from `layers.title`; the `motion` caption comes from `layers.subtitle`.
+
+`motion` and `text-motion` slides last 8 seconds and render as MP4. The line art makes one full cycle per slide, so it loops without a jump.
+
+## List icons
+
+List items take an optional `icon`: any [lucide-react](https://lucide.dev/icons) icon, such as `icon: ThumbsUp`, or your own component that accepts `size`, `color`, and `strokeWidth`.
 
 ## Add a post
 

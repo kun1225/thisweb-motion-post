@@ -103,7 +103,7 @@ function withLayout(
   };
 }
 
-function renderMediaPlaceholder() {
+export function renderMediaPlaceholder() {
   return (
     <AbsoluteFill
       style={{
