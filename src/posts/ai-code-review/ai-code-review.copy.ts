@@ -1,4 +1,5 @@
 import type { CarouselLang, CarouselSlide } from '../../carousel/carousel.type';
+import { CLAWD_CLIP, CLAWD_FRAMES } from './ai-code-review-mascot';
 
 // Only zh for now; the en slides come later.
 export const AI_CODE_REVIEW_SLIDES: Record<CarouselLang, CarouselSlide[]> = {
@@ -8,6 +9,7 @@ export const AI_CODE_REVIEW_SLIDES: Record<CarouselLang, CarouselSlide[]> = {
       subtitle: 'Anthropic 的',
       title: 'AI Code Review 流程',
       media: { kind: 'none' },
+      mascot: { clip: CLAWD_CLIP, frames: CLAWD_FRAMES },
     },
     {
       layout: 'text-motion',

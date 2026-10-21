@@ -12,6 +12,7 @@ import type {
   CarouselCoverProps,
   CarouselLang,
   CarouselLayerSettings,
+  CarouselMascot,
   CarouselMedia,
   CarouselMediaLayer,
   CarouselPost,
@@ -81,6 +82,9 @@ export function CarouselSlideView({
           renderClip={renderClip}
         />
       )}
+      {slide.layout === 'cover' && slide.mascot && (
+        <CoverMascot mascot={slide.mascot} renderClip={renderClip} />
+      )}
       {slide.layout === 'content' && (
         <CarouselContent
           slide={slide}
@@ -113,6 +117,8 @@ export function carouselSlideDuration(slide: CarouselSlide) {
   const media = 'media' in slide ? slide.media : null;
   if (media?.kind === 'video') return media.frames;
   if (media?.kind === 'clip') return media.frames * media.loops;
+  // Without this the cover is a one-frame still, so its background never moves.
+  if (slide.layout === 'cover' && slide.mascot) return slide.mascot.frames;
   return 1;
 }
 
@@ -322,6 +328,28 @@ function CoverPoster({ slide, lang, layers }: CarouselCoverProps) {
         {slide.title}
       </CoverText>
     </div>
+  );
+}
+
+// Above the cover inset, where no cover layout puts text.
+const MASCOT_BOX = { top: 90, left: PAD_X, width: CONTENT_WIDTH, height: 240 };
+
+function CoverMascot({
+  mascot,
+  renderClip,
+}: {
+  mascot: CarouselMascot;
+  renderClip: CarouselPost['renderClip'];
+}) {
+  const { top, left, ...size } = MASCOT_BOX;
+  return (
+    <Sequence name="Mascot" layout="none">
+      <div style={{ position: 'absolute', top, left, ...size }}>
+        <Loop durationInFrames={mascot.frames}>
+          {renderClip?.(mascot.clip, size)}
+        </Loop>
+      </div>
+    </Sequence>
   );
 }
 

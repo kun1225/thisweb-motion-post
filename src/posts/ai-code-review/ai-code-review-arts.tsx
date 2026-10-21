@@ -5,6 +5,7 @@ import type {
   CarouselLineArtProps,
   CarouselPost,
 } from '../../carousel/carousel.type';
+import { InkPath } from '../../carousel/carousel-ink';
 import {
   ArtSvg,
   CLAMP_EASE,
@@ -45,10 +46,10 @@ function PointsArt({ progress, color, ...props }: CarouselLineArtProps) {
         );
         return (
           <g key={x}>
-            <path d={circlePath(x, POINTS.y, POINTS.r)} />
+            <InkPath d={circlePath(x, POINTS.y, POINTS.r)} />
             <Dot x={x} y={POINTS.y} r={POINTS.r * 0.5 * fill} color={color} />
             {i < last && (
-              <Stroke
+              <InkPath
                 d={`M ${x + POINTS.r + 10} ${POINTS.y} H ${x + POINTS.gap - POINTS.r - 10}`}
                 from={clamp01(tail - i)}
                 to={clamp01(head - i)}
@@ -65,34 +66,44 @@ function PointsArt({ progress, color, ...props }: CarouselLineArtProps) {
 const PAGE = { x: 330, y: 20, w: 200, h: 300 };
 const CODE_WIDTHS = [110, 70, 130, 90, 50];
 const SCANS = [
-  { range: [0.06, 0.3], dash: undefined },
+  { range: [0.06, 0.3], dashed: false },
   // The second pass is the fresh agent, so it gets its own line style.
-  { range: [0.36, 0.6], dash: '14 12' },
+  { range: [0.36, 0.6], dashed: true },
 ] as const;
+// Ink has no dash pattern, so a dashed line is drawn as its pieces: 14 on, 12 off.
+const SCAN_LENGTH = PAGE.w + 68;
+const SCAN_DASHES = Array.from(
+  { length: Math.ceil(SCAN_LENGTH / 26) },
+  (_, i) => [(i * 26) / SCAN_LENGTH, Math.min((i * 26 + 14) / SCAN_LENGTH, 1)],
+);
 
 /** A page of code scanned twice, then checked off. */
 function VerifyArt({ progress, ...props }: CarouselLineArtProps) {
   return (
     <ArtSvg {...props} id="verify" width={860} height={360}>
-      <path d={roundedRect(PAGE.x, PAGE.y, PAGE.w, PAGE.h, 20)} />
+      <InkPath d={roundedRect(PAGE.x, PAGE.y, PAGE.w, PAGE.h, 20)} />
       {CODE_WIDTHS.map((width, i) => {
         const x = PAGE.x + 36;
         const y = PAGE.y + 64 + i * 46;
-        return <path key={y} d={`M ${x} ${y} H ${x + width}`} />;
+        return <InkPath key={y} d={`M ${x} ${y} H ${x + width}`} />;
       })}
-      {SCANS.map(({ range, dash }) => {
+      {SCANS.map(({ range, dashed }) => {
         const t = ramp(progress, range[0], range[1]);
         const y = PAGE.y + 20 + t * (PAGE.h - 40);
+        const d = `M ${PAGE.x - 34} ${y} H ${PAGE.x + PAGE.w + 34}`;
         return (
-          <path
-            key={range[0]}
-            d={`M ${PAGE.x - 34} ${y} H ${PAGE.x + PAGE.w + 34}`}
-            strokeDasharray={dash}
-            opacity={Math.sin(Math.PI * t)}
-          />
+          <g key={range[0]} opacity={Math.sin(Math.PI * t)}>
+            {dashed ? (
+              SCAN_DASHES.map(([from, to]) => (
+                <InkPath key={from} d={d} from={from} to={to} />
+              ))
+            ) : (
+              <InkPath d={d} />
+            )}
+          </g>
         );
       })}
-      <Stroke
+      <InkPath
         d="M 600 190 L 640 230 L 730 130"
         from={ramp(progress, 0.86, 0.96)}
         to={ramp(progress, 0.64, 0.74)}
@@ -118,7 +129,7 @@ function LayersArt({ progress, color, ...props }: CarouselLineArtProps) {
         const y = GATES.top + i * GATES.gap;
         const dip = 16 * Math.exp(-(((dotY - y) / 22) ** 2));
         return (
-          <path
+          <InkPath
             key={y}
             d={`M ${GATES.left} ${y} Q ${middle} ${y + 2 * dip} ${GATES.right} ${y}`}
           />
@@ -144,14 +155,14 @@ function RiskArt({ progress, ...props }: CarouselLineArtProps) {
   const erase = ramp(progress, 0.84, 0.96);
   return (
     <ArtSvg {...props} id="risk" width={860} height={360}>
-      <path d={`M 170 ${RISK_BASE} H 690`} />
+      <InkPath d={`M 170 ${RISK_BASE} H 690`} />
       {RISK_BARS.map(({ x, height, people }, i) => {
         const top = RISK_BASE - height;
         const start = 0.05 + i * 0.14;
         const pop = ramp(progress, start + 0.17, start + 0.25) * (1 - erase);
         return (
           <g key={x}>
-            <Stroke
+            <InkPath
               d={`M ${x - 50} ${RISK_BASE} V ${top} H ${x + 50} V ${RISK_BASE}`}
               from={erase}
               to={ramp(progress, start, start + 0.2)}
@@ -162,7 +173,7 @@ function RiskArt({ progress, ...props }: CarouselLineArtProps) {
             >
               {people === 0 ? (
                 // No people: the AI checks are enough.
-                <path d="M -22 -34 L -6 -18 L 24 -50" />
+                <InkPath d="M -22 -34 L -6 -18 L 24 -50" />
               ) : (
                 Array.from({ length: people }, (_, p) => (
                   <Person key={p} x={(p - (people - 1) / 2) * 56} />
@@ -179,8 +190,8 @@ function RiskArt({ progress, ...props }: CarouselLineArtProps) {
 function Person({ x }: { x: number }) {
   return (
     <>
-      <path d={circlePath(x, -56, 13)} />
-      <path d={`M ${x - 22} -16 A 22 22 0 0 1 ${x + 22} -16`} />
+      <InkPath d={circlePath(x, -56, 13)} />
+      <InkPath d={`M ${x - 22} -16 A 22 22 0 0 1 ${x + 22} -16`} />
     </>
   );
 }
@@ -208,21 +219,21 @@ function LoopArt({ progress, color, ...props }: CarouselLineArtProps) {
   );
   return (
     <ArtSvg {...props} color={color} id="loop" width={860} height={360}>
-      <path d={circlePath(ORBIT.x, ORBIT.y, ORBIT.r)} />
+      <InkPath d={circlePath(ORBIT.x, ORBIT.y, ORBIT.r)} />
       <g opacity={fade}>
         {/* A tally mark for each finished lap. */}
         {Array.from({ length: ORBIT.laps }, (_, k) => {
           const x = ORBIT.x + (k - 1) * 30;
           return (
-            <Stroke
+            <InkPath
               key={x}
               d={`M ${x} ${ORBIT.y - 30} V ${ORBIT.y + 30}`}
               to={clamp01((lap - k - 0.85) / 0.15)}
             />
           );
         })}
-        <Stroke d={`M ${EXIT.from} ${EXIT.y} H ${EXIT.to}`} to={exit} />
-        <Stroke
+        <InkPath d={`M ${EXIT.from} ${EXIT.y} H ${EXIT.to}`} to={exit} />
+        <InkPath
           d={`M ${EXIT.to - 28} ${EXIT.y - 24} L ${EXIT.to} ${EXIT.y} L ${EXIT.to - 28} ${EXIT.y + 24}`}
           to={ramp(progress, 0.78, 0.86)}
         />
@@ -244,8 +255,8 @@ function LearnArt({ progress, ...props }: CarouselLineArtProps) {
   const fade = 1 - ramp(progress, 0.86, 0.96);
   return (
     <ArtSvg {...props} id="learn" width={860} height={360}>
-      <path d={roundedRect(DOC.x, DOC.y, DOC.w, DOC.h, 20)} />
-      <path
+      <InkPath d={roundedRect(DOC.x, DOC.y, DOC.w, DOC.h, 20)} />
+      <InkPath
         d={`M 290 ${BUG.y} H 440 M 418 ${BUG.y - 22} L 440 ${BUG.y} L 418 ${BUG.y + 22}`}
       />
       <g opacity={fade}>
@@ -261,12 +272,12 @@ function LearnArt({ progress, ...props }: CarouselLineArtProps) {
           const s = BUG.size;
           return (
             <g key={ruleY}>
-              <path
+              <InkPath
                 d={`M ${-s} ${-s} L ${s} ${s} M ${s} ${-s} L ${-s} ${s}`}
                 transform={`translate(${x} ${y}) scale(${scale})`}
                 visibility={scale > 0 && rule === 0 ? 'visible' : 'hidden'}
               />
-              <Stroke d={`M ${ruleX} ${ruleY} H ${ruleX + width}`} to={rule} />
+              <InkPath d={`M ${ruleX} ${ruleY} H ${ruleX + width}`} to={rule} />
             </g>
           );
         })}
@@ -292,9 +303,9 @@ function DirectionArt({ progress, color, ...props }: CarouselLineArtProps) {
   const to = HEADINGS[(step + 1) % HEADINGS.length] ?? 0;
   return (
     <ArtSvg {...props} color={color} id="direction" width={860} height={360}>
-      <path d={circlePath(COMPASS.x, COMPASS.y, COMPASS.r)} />
+      <InkPath d={circlePath(COMPASS.x, COMPASS.y, COMPASS.r)} />
       {[0, 90, 180, 270].map((tick) => (
-        <path
+        <InkPath
           key={tick}
           d={`M 0 ${-COMPASS.r} V ${-COMPASS.r + 20}`}
           transform={`translate(${COMPASS.x} ${COMPASS.y}) rotate(${tick})`}
@@ -303,7 +314,7 @@ function DirectionArt({ progress, color, ...props }: CarouselLineArtProps) {
       <g
         transform={`translate(${COMPASS.x} ${COMPASS.y}) rotate(${from + (to - from) * turn})`}
       >
-        <path d="M 0 -112 L 18 0 L 0 112 L -18 0 Z" />
+        <InkPath d="M 0 -112 L 18 0 L 0 112 L -18 0 Z" />
         <path d="M 0 -112 L 18 0 L -18 0 Z" fill={color} stroke="none" />
       </g>
       <Dot x={COMPASS.x} y={COMPASS.y} r={7} color={color} />
@@ -320,7 +331,7 @@ function ReplyArt({ progress, color, ...props }: CarouselLineArtProps) {
   const hide = 1 - ramp(progress, 0.7, 0.76);
   return (
     <ArtSvg {...props} color={color} id="reply" width={860} height={460}>
-      <Stroke
+      <InkPath
         d={BUBBLE_PATH}
         from={ramp(progress, 0.72, 0.95)}
         to={ramp(progress, 0.04, 0.38)}
@@ -347,19 +358,6 @@ function ReplyArt({ progress, color, ...props }: CarouselLineArtProps) {
 }
 
 // *** Shared ***
-/** Shows the part of a path between `from` and `to`, each 0 to 1 along its length. */
-function Stroke({ d, from = 0, to }: { d: string; from?: number; to: number }) {
-  return (
-    <path
-      d={d}
-      pathLength={1}
-      strokeDasharray={`${Math.max(to - from, 0)} 2`}
-      strokeDashoffset={-from}
-      visibility={to > from ? 'visible' : 'hidden'}
-    />
-  );
-}
-
 function Dot({
   x,
   y,

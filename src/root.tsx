@@ -467,6 +467,60 @@ export function RemotionRoot() {
           width={CAROUSEL_SIZE.width}
           height={CAROUSEL_SIZE.height}
         />
+        <Composition
+          id="text-motion-top"
+          component={TextMotionPreview}
+          defaultProps={{
+            lang: 'zh',
+            layers: {
+              motion: {
+                art: 'swing',
+                position: 'top',
+                color: '#F9FAFB',
+                boil: 2.5,
+                strokeWidth: 4,
+              },
+              title: {
+                text: '二、Sequential Agent',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          fps={CAROUSEL_FPS}
+          durationInFrames={CAROUSEL_MOTION_FRAMES}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="text-motion-full"
+          component={TextMotionPreview}
+          defaultProps={{
+            lang: 'zh',
+            layers: {
+              motion: {
+                art: 'spin',
+                position: 'full',
+                color: '#F9FAFB',
+                boil: 2.5,
+                strokeWidth: 5,
+              },
+              title: {
+                text: '二、Sequential Agent',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          fps={CAROUSEL_FPS}
+          durationInFrames={CAROUSEL_MOTION_FRAMES}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
       </Folder>
       <Folder name="covers">
         <Composition

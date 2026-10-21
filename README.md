@@ -21,7 +21,7 @@ Open a slide, press Escape to clear the layer selection, and expand the right si
 - `background` (cover slides): the background animation. Use `drift` (default; a teal glow moving in a circle), `grid` (a dot grid with a band of light passing through), or `code` (faint code lines scrolling up). Other slides use the static background.
 - `coverLayout` (cover slides): `stack` (default; subtitle and title on top, media below), `split` (title top left, subtitle bottom right, no media), `caption` (title on top, media in the middle, subtitle as a small caption), or `poster` (big title at the bottom left, no media). Raise the title `fontSize` for `split` and `poster`.
 - `listLayout` (list slides): `icon` (default; one card per item with its icon, or its number when it has no icon), `cards` (a bold label on top of each card), `ruled` (no cards; thin lines between rows), or `steps` (numbers on a line, for items that happen in order).
-- `motion` (`motion` and `text-motion` slides): the line art. `art` is `draw` (a pen line draws a square and dot, then wipes them), `turn` (a square makes quarter turns), or `field` (parallel lines with a slow wave). A post can also add its own line art in its `arts` (see `src/posts/ai-code-review/ai-code-review-arts.tsx`); use its name as `art`. `color` is the line colour, `boil` is the hand-drawn wobble in pixels (0 turns it off), and `strokeWidth` is the line width. On `text-motion` slides, `position` is `right` (default; small art in the bottom right) or `center` (wider art along the bottom).
+- `motion` (`motion` and `text-motion` slides): the line art. `art` is `draw` (a pen line draws a square and dot, then wipes them), `turn` (a square makes quarter turns), `field` (parallel lines with a slow wave), `swing` (a row of balls in a pendulum wave), or `spin` (coins roll across the slide, spinning on their edge). A post can also add its own line art in its `arts` (see `src/posts/ai-code-review/ai-code-review-arts.tsx`); use its name as `art`. `color` is the line colour, `boil` is the hand-drawn wobble in pixels (0 turns it off), and `strokeWidth` is the line width. On `text-motion` slides, `position` is `right` (default; small art in the bottom right), `center` (wider art along the bottom), `top` (big art on top, text at the bottom), or `full` (centred text, with the art moving across the whole slide on top of it). Lines are drawn as ink with [perfect-freehand](https://github.com/steveruizok/perfect-freehand), so they swell, thin, and taper like a brush pen; draw a post's own lines with `InkPath` from `src/carousel/carousel-ink.tsx`.
 - `media`: position and scale. Videos also have a file path, frame count, and aspect ratio.
 
 Positions are offsets in pixels: positive `x` moves right and positive `y` moves down. Video paths are relative to `public/`. At 30 fps, 30 frames equal one second. Changing the frame count updates the slide duration; it does not change the video's playback speed.
@@ -36,7 +36,7 @@ Studio saves edits to that slide's `defaultProps` in `src/root.tsx`. Each compos
   - `list`: title, optional lead `body`, and items in one of four `listLayout`s
   - `result`: title, media, tip list
   - `motion`: a short centred statement, line art, and a small `caption`
-  - `text-motion`: title and body, with line art in the space below
+  - `text-motion`: title and body, with line art below, above, or across the whole slide (see `position`)
 - `src/posts/<post-id>/`: one folder per post. It has the slide text and any animations of its own.
 - `src/posts/index.ts`: the post data and animations used by the compositions.
 - `src/covers/`: sample covers for trying layouts and backgrounds without a real post.
@@ -50,7 +50,7 @@ The **covers** folder in Studio shows each cover layout with sample text and a d
 
 ## Layout previews
 
-The **layouts** folder in Studio shows the other layouts with sample 繁中 text: `content` (a dashed box where the media goes, like `cover-stack`; change `layers.media.ratio` to try other media shapes), `text`, `list-icon`, `list-cards`, `list-ruled`, `list-steps`, `motion`, and `text-motion`. Set `lang` to `en` for the English sample. The title comes from `layers.title`; the `motion` caption comes from `layers.subtitle`.
+The **layouts** folder in Studio shows the other layouts with sample 繁中 text: `content` (a dashed box where the media goes, like `cover-stack`; change `layers.media.ratio` to try other media shapes), `text`, `list-icon`, `list-cards`, `list-ruled`, `list-steps`, `motion`, `text-motion`, `text-motion-top`, and `text-motion-full`. Set `lang` to `en` for the English sample. The title comes from `layers.title`; the `motion` caption comes from `layers.subtitle`.
 
 `motion` and `text-motion` slides last 8 seconds and render as MP4. The line art makes one full cycle per slide, so it loops without a jump.
 

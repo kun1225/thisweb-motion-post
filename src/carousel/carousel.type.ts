@@ -32,13 +32,19 @@ export type CarouselCoverLayout = 'stack' | 'split' | 'caption' | 'poster';
 
 export type CarouselListLayout = 'icon' | 'cards' | 'ruled' | 'steps';
 
-export type CarouselLineArt = 'draw' | 'turn' | 'field';
+export type CarouselLineArt = 'draw' | 'turn' | 'field' | 'swing' | 'spin';
+
+/**
+ * Where `text-motion` slides put the line art: `right` (small, bottom right), `center` (wide, below the text),
+ * `top` (big, above the text), or `full` (across the whole slide, over centred text).
+ */
+export type CarouselMotionPosition = 'center' | 'right' | 'top' | 'full';
 
 export type CarouselMotionLayer = {
   /** A shared art, or one from the post's own `arts`. */
   art: CarouselLineArt | (string & {});
   /** `text-motion` slides only. */
-  position?: 'center' | 'right';
+  position?: CarouselMotionPosition;
   color: string;
   /** Hand-drawn wobble in pixels; 0 turns it off. */
   boil: number;
@@ -51,7 +57,14 @@ export type CarouselLineArtProps = Omit<
 > & {
   /** 0 at the first frame, approaching 1 at the last. */
   progress: number;
-  align: 'center' | 'right';
+  align: CarouselMotionPosition;
+};
+
+export type CarouselTextMotionLayoutProps = {
+  slide: Extract<CarouselSlide, { layout: 'text-motion' }>;
+  layers: CarouselLayerSettings;
+  position: CarouselMotionPosition;
+  art: ReactNode;
 };
 
 export type CarouselLayerSettings = {
@@ -93,6 +106,9 @@ export type CarouselMedia =
   | { kind: 'clip'; id: string; frames: number; loops: number; ratio: number }
   | { kind: 'none' };
 
+/** A post's own clip in the cover's top left corner, drawn by `renderClip`. The cover lasts as long as it. */
+export type CarouselMascot = { clip: string; frames: number };
+
 /** A lucide-react icon, or any component that takes the same props. */
 export type CarouselIcon = ComponentType<{
   size?: number;
@@ -111,7 +127,13 @@ export type CarouselListSlide = Extract<CarouselSlide, { layout: 'list' }>;
 
 /** Text may use **highlight** and `code`. */
 export type CarouselSlide =
-  | { layout: 'cover'; subtitle: string; title: string; media: CarouselMedia }
+  | {
+      layout: 'cover';
+      subtitle: string;
+      title: string;
+      media: CarouselMedia;
+      mascot?: CarouselMascot;
+    }
   | { layout: 'content'; title: string; body: string; media: CarouselMedia }
   | { layout: 'list'; title: string; body?: string; items: CarouselListItem[] }
   | { layout: 'result'; title: string; tips: string[]; media: CarouselMedia }

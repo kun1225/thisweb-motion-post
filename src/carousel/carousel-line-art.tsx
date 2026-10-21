@@ -4,10 +4,18 @@ import { Easing, interpolate, useCurrentFrame, useVideoConfig } from 'remotion';
 import type {
   CarouselLineArt,
   CarouselLineArtProps,
+  CarouselMotionPosition,
   CarouselPost,
 } from './carousel.type';
+import { InkContext, InkPath } from './carousel-ink';
 
-export const CAROUSEL_LINE_ARTS: CarouselLineArt[] = ['draw', 'turn', 'field'];
+export const CAROUSEL_LINE_ARTS: CarouselLineArt[] = [
+  'draw',
+  'turn',
+  'field',
+  'swing',
+  'spin',
+];
 
 /** One-colour line drawing that fills its box. One full cycle per slide, so it loops without a jump. */
 export function CarouselLineArtView({
@@ -37,6 +45,8 @@ const ARTS: Record<
   draw: DrawArt,
   turn: TurnArt,
   field: FieldArt,
+  swing: SwingArt,
+  spin: SpinArt,
 };
 
 // *** DrawArt ***
@@ -54,16 +64,7 @@ function DrawArt({ progress, ...props }: CarouselLineArtProps) {
         {DRAW_STROKES.map((stroke) => {
           const from = strokeShare(tail, stroke);
           const to = strokeShare(head, stroke);
-          return (
-            <path
-              key={stroke.d}
-              d={stroke.d}
-              pathLength={1}
-              strokeDasharray={`${to - from} 2`}
-              strokeDashoffset={-from}
-              visibility={to > from ? 'visible' : 'hidden'}
-            />
-          );
+          return <InkPath key={stroke.d} d={stroke.d} from={from} to={to} />;
         })}
       </g>
     </ArtSvg>
@@ -91,7 +92,7 @@ function TurnArt({ progress, color, ...props }: CarouselLineArtProps) {
       height={SQUARE_BOX}
     >
       <g transform={`${SQUARE_CENTER} rotate(${TILT + 90 * (step + turn)})`}>
-        <path d={SQUARE_PATH} />
+        <InkPath d={SQUARE_PATH} />
         <path
           d={circlePath(DOT.x, DOT.y, DOT.r * 0.45)}
           fill={color}
@@ -116,7 +117,7 @@ function FieldArt({ progress, strokeWidth, ...props }: CarouselLineArtProps) {
       height={FIELD.height}
     >
       {Array.from({ length: FIELD.lines }, (_, i) => (
-        <path key={i} d={fieldLine(i, progress)} />
+        <InkPath key={i} d={fieldLine(i, progress)} />
       ))}
     </ArtSvg>
   );
@@ -135,6 +136,58 @@ function fieldLine(index: number, progress: number) {
   return `M ${points.join(' L ')}`;
 }
 
+// *** SwingArt ***
+const SWING = { width: 860, height: 460, balls: 7, r: 30, reach: 150, laps: 2 };
+
+/**
+ * A pendulum wave: each ball swings one more time per loop than the one before,
+ * so the row breaks into waves and lines up again exactly at the loop point.
+ */
+function SwingArt({ progress, ...props }: CarouselLineArtProps) {
+  const gap = (SWING.width - 4 * SWING.r) / (SWING.balls - 1);
+  return (
+    <ArtSvg {...props} id="swing" width={SWING.width} height={SWING.height}>
+      {Array.from({ length: SWING.balls }, (_, i) => {
+        const x = 2 * SWING.r + i * gap;
+        const swing = Math.sin(2 * Math.PI * progress * (SWING.laps + i));
+        const y = SWING.height / 2 - SWING.reach * swing;
+        return <InkPath key={x} d={circlePath(x, y, SWING.r)} />;
+      })}
+    </ArtSvg>
+  );
+}
+
+// *** SpinArt ***
+// The slide's own size, so on `full` slides the coins cross the whole post.
+const SPIN = { width: 1080, height: 1350, r: 120 };
+const COINS = [
+  { y: 330, offset: 0, spins: 3 },
+  { y: 760, offset: 0.4, spins: 4 },
+  { y: 1080, offset: 0.75, spins: 2 },
+];
+const RINGS = [1, 0.7, 0.4];
+
+/** Coins roll across, each spinning on its edge. Each crosses once per loop, off-screen at the loop point. */
+function SpinArt({ progress, ...props }: CarouselLineArtProps) {
+  return (
+    <ArtSvg {...props} id="spin" width={SPIN.width} height={SPIN.height}>
+      {COINS.map(({ y, offset, spins }) => {
+        const travel = (progress + offset) % 1;
+        const x = -SPIN.r + travel * (SPIN.width + 2 * SPIN.r);
+        const turn = Math.cos(2 * Math.PI * (progress * spins + offset));
+        return RINGS.map((ring) => {
+          const r = SPIN.r * ring;
+          // A coin seen edge-on is a line; 2 keeps the ellipse from collapsing to nothing.
+          const width = Math.max(Math.abs(turn) * r, 2);
+          return (
+            <InkPath key={`${y}-${ring}`} d={ellipsePath(x, y, width, r)} />
+          );
+        });
+      })}
+    </ArtSvg>
+  );
+}
+
 // *** Shared ***
 const SQUARE_BOX = 460;
 const SQUARE_HALF = 150;
@@ -144,7 +197,11 @@ const SQUARE_PATH = `M ${-SQUARE_HALF} ${-SQUARE_HALF} L ${SQUARE_HALF} ${-SQUAR
 const DOT = { x: -62, y: 58, r: 44 };
 
 export function circlePath(x: number, y: number, r: number) {
-  return `M ${x - r} ${y} A ${r} ${r} 0 1 0 ${x + r} ${y} A ${r} ${r} 0 1 0 ${x - r} ${y}`;
+  return ellipsePath(x, y, r, r);
+}
+
+function ellipsePath(x: number, y: number, rx: number, ry: number) {
+  return `M ${x - rx} ${y} A ${rx} ${ry} 0 1 0 ${x + rx} ${y} A ${rx} ${ry} 0 1 0 ${x - rx} ${y}`;
 }
 
 // SVG restarts the dash at every subpath, so each shape is its own path, drawn one after the other.
@@ -171,7 +228,15 @@ export const CLAMP_EASE = {
   extrapolateRight: 'clamp',
 } as const;
 
-/** The shared SVG box and hand-drawn stroke style, also used by posts' own arts. */
+// Small art hugs the edge next to the text; big art sits in the middle of its box.
+const ART_ALIGN: Record<CarouselMotionPosition, string> = {
+  right: 'xMaxYMax meet',
+  center: 'xMidYMax meet',
+  top: 'xMidYMid meet',
+  full: 'xMidYMid meet',
+};
+
+/** The shared SVG box and hand-drawn ink style, also used by posts' own arts. Draw lines with `InkPath`. */
 export function ArtSvg({
   id,
   width,
@@ -193,9 +258,7 @@ export function ArtSvg({
       viewBox={`0 0 ${width} ${height}`}
       width="100%"
       height="100%"
-      preserveAspectRatio={
-        align === 'right' ? 'xMaxYMax meet' : 'xMidYMax meet'
-      }
+      preserveAspectRatio={ART_ALIGN[align]}
       style={{ position: 'absolute', inset: 0 }}
     >
       <defs>
@@ -209,7 +272,9 @@ export function ArtSvg({
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        {children}
+        <InkContext value={{ color, width: strokeWidth }}>
+          {children}
+        </InkContext>
       </g>
     </svg>
   );
