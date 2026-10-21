@@ -44,11 +44,11 @@ export const AI_CODE_REVIEW_SLIDES: Record<CarouselLang, CarouselSlide[]> = {
     {
       layout: 'text-motion',
       title: '6. 人類還是需要負責方向與結果',
-      body: '功能該不該做、架構是否合適、檢查是否足夠，都需要**人來判斷**。\n\n指揮 AI 的人，也要為**上線結果**負責。',
+      body: '產品方向、功能需求，以及檢查是否足夠，最後都還是需要**人類來判斷**。\n\n也只有人類能為**上線的結果**負責。',
     },
     {
       layout: 'motion',
-      title: '留言「Review」 我把完整文章傳給你！',
+      title: '留言「Review」我把完整文章傳給你！',
       caption: '來源：How the Claude Code team does code review',
     },
   ],
