@@ -18,7 +18,7 @@ const UNIT = 16;
 const STEP_FRAMES = 5;
 const WAVE_FRAMES = 6;
 
-/** Claude's pixel mascot walks out, waves hello, and walks back home. */
+/** Claude's pixel mascot walks in from the right, waves hello, and walks back home. */
 export function ClawdHello() {
   const frame = useCurrentFrame();
   const x = interpolate(
@@ -29,7 +29,7 @@ export function ClawdHello() {
   );
   const hop = frame > BEAT.hello[0] && frame < BEAT.hello[0] + 6 ? -UNIT : 0;
   return (
-    <div style={{ position: 'absolute', left: x, bottom: 0 }}>
+    <div style={{ position: 'absolute', right: x, bottom: 0 }}>
       <ClawdSprite pose={clawdPose(frame)} y={hop} />
       <HelloBubble frame={frame} />
     </div>
@@ -48,16 +48,16 @@ function clawdPose(frame: number): ClawdPose {
   const step = (Math.floor(frame / STEP_FRAMES) % 2) as 0 | 1;
   const blink = (frame >= 4 && frame < 7) || (frame >= 120 && frame < 123);
   if (frame >= BEAT.walkOut[0] && frame < BEAT.walkOut[1]) {
-    return { move: 'walk', facing: 1, step, blink };
+    return { move: 'walk', facing: -1, step, blink };
   }
   if (frame >= BEAT.walkBack[0] && frame < BEAT.walkBack[1]) {
-    return { move: 'walk', facing: -1, step, blink };
+    return { move: 'walk', facing: 1, step, blink };
   }
   if (frame >= BEAT.hello[0] && frame < BEAT.hello[1]) {
     const wave = (Math.floor(frame / WAVE_FRAMES) % 2) as 0 | 1;
-    return { move: 'wave', facing: -1, step: wave, blink };
+    return { move: 'wave', facing: 1, step: wave, blink };
   }
-  return { move: 'stand', facing: -1, step, blink };
+  return { move: 'stand', facing: 1, step, blink };
 }
 
 // *** ClawdSprite ***
@@ -141,7 +141,7 @@ function Pixels({ list, fill }: { list: readonly Pixel[]; fill: string }) {
 // *** HelloBubble ***
 const POP = Easing.out(Easing.back(2));
 
-/** A square speech bubble that pops up by Clawd's head while it waves. */
+/** A square speech bubble that pops up left of Clawd's head, toward the open space. */
 function HelloBubble({ frame }: { frame: number }) {
   const start = BEAT.hello[0] + 3;
   const end = BEAT.hello[1] - 2;
@@ -156,10 +156,10 @@ function HelloBubble({ frame }: { frame: number }) {
     <div
       style={{
         position: 'absolute',
-        left: (SPRITE.width + 2) * UNIT,
+        right: (SPRITE.width + 2) * UNIT,
         bottom: 10 * UNIT,
         scale,
-        transformOrigin: 'bottom left',
+        transformOrigin: 'bottom right',
         padding: '14px 22px',
         backgroundColor: '#F9FAFB',
         color: COLOR.eye,
@@ -176,7 +176,7 @@ function HelloBubble({ frame }: { frame: number }) {
           key={i}
           style={{
             position: 'absolute',
-            left: -i * UNIT,
+            right: -i * UNIT,
             top: `calc(100% + ${i * UNIT}px)`,
             width: UNIT,
             height: UNIT,
