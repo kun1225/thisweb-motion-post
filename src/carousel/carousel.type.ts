@@ -35,7 +35,8 @@ export type CarouselListLayout = 'icon' | 'cards' | 'ruled' | 'steps';
 export type CarouselLineArt = 'draw' | 'turn' | 'field';
 
 export type CarouselMotionLayer = {
-  art: CarouselLineArt;
+  /** A shared art, or one from the post's own `arts`. */
+  art: CarouselLineArt | (string & {});
   /** `text-motion` slides only. */
   position?: 'center' | 'right';
   color: string;
@@ -126,4 +127,6 @@ export type CarouselPost = {
     id: string,
     size: { width: number; height: number },
   ) => ReactNode;
+  /** Line art drawn for this post only, picked by `layers.motion.art`. */
+  arts?: Record<string, (props: CarouselLineArtProps) => ReactNode>;
 };

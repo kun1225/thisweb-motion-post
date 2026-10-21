@@ -1,21 +1,30 @@
 import type { ReactNode } from 'react';
 import { Easing, interpolate, useCurrentFrame, useVideoConfig } from 'remotion';
 
-import type { CarouselLineArt, CarouselLineArtProps } from './carousel.type';
+import type {
+  CarouselLineArt,
+  CarouselLineArtProps,
+  CarouselPost,
+} from './carousel.type';
 
 export const CAROUSEL_LINE_ARTS: CarouselLineArt[] = ['draw', 'turn', 'field'];
 
 /** One-colour line drawing that fills its box. One full cycle per slide, so it loops without a jump. */
 export function CarouselLineArtView({
   art,
+  arts,
   ...props
-}: Omit<CarouselLineArtProps, 'progress'> & { art: CarouselLineArt }) {
+}: Omit<CarouselLineArtProps, 'progress'> & {
+  art: string;
+  arts: CarouselPost['arts'];
+}) {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
-  const Art = ARTS[art];
+  const Art = arts?.[art] ?? ARTS[art as CarouselLineArt];
   if (Art === undefined) {
+    const names = [...CAROUSEL_LINE_ARTS, ...Object.keys(arts ?? {})];
     throw new Error(
-      `Unknown line art "${art}". Use one of: ${CAROUSEL_LINE_ARTS.join(', ')}.`,
+      `Unknown line art "${art}". Use one of: ${names.join(', ')}.`,
     );
   }
   return <Art {...props} progress={frame / durationInFrames} />;
@@ -134,7 +143,7 @@ const TILT = -36;
 const SQUARE_PATH = `M ${-SQUARE_HALF} ${-SQUARE_HALF} L ${SQUARE_HALF} ${-SQUARE_HALF} L ${SQUARE_HALF} ${SQUARE_HALF} L ${-SQUARE_HALF} ${SQUARE_HALF} Z`;
 const DOT = { x: -62, y: 58, r: 44 };
 
-function circlePath(x: number, y: number, r: number) {
+export function circlePath(x: number, y: number, r: number) {
   return `M ${x - r} ${y} A ${r} ${r} 0 1 0 ${x + r} ${y} A ${r} ${r} 0 1 0 ${x - r} ${y}`;
 }
 
@@ -155,14 +164,15 @@ function strokeShare(at: number, stroke: (typeof DRAW_STROKES)[number]) {
   return Math.min(Math.max(drawn / stroke.length, 0), 1);
 }
 
-const EASE_IN_OUT = Easing.bezier(0.65, 0, 0.35, 1);
-const CLAMP_EASE = {
+export const EASE_IN_OUT = Easing.bezier(0.65, 0, 0.35, 1);
+export const CLAMP_EASE = {
   easing: EASE_IN_OUT,
   extrapolateLeft: 'clamp',
   extrapolateRight: 'clamp',
 } as const;
 
-function ArtSvg({
+/** The shared SVG box and hand-drawn stroke style, also used by posts' own arts. */
+export function ArtSvg({
   id,
   width,
   height,

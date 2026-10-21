@@ -1,5 +1,9 @@
 import { Composition, Folder } from 'remotion';
 
+import {
+  CarouselComposition,
+  calculateCarouselMetadata,
+} from './carousel/carousel-composition';
 import { CAROUSEL_MOTION_FRAMES } from './carousel/carousel-motion';
 import { CAROUSEL_FPS, CAROUSEL_SIZE } from './carousel/carousel-slide';
 import {
@@ -19,6 +23,259 @@ export function RemotionRoot() {
   // Separate nodes let Studio save each slide without changing the others.
   return (
     <>
+      <Folder name="ai-code-review">
+        <Composition
+          id="ai-code-review-zh-1"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              background: 'code',
+              coverLayout: 'poster',
+              title: {
+                text: 'AI Code Review 流程',
+                fontSize: 140,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              subtitle: {
+                text: 'Anthropic 的',
+                fontSize: 40,
+                color: '#F7F7F7',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="ai-code-review-zh-2"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'points',
+                position: 'center',
+                color: '#F9FAFB',
+                boil: 2.5,
+                strokeWidth: 3,
+              },
+              title: {
+                text: '6 個重點',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="ai-code-review-zh-3"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'verify',
+                position: 'center',
+                color: '#F9FAFB',
+                boil: 2.5,
+                strokeWidth: 3,
+              },
+              title: {
+                text: '1. 開 PR 前，先讓 AI 驗證過',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="ai-code-review-zh-4"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'layers',
+                position: 'right',
+                color: '#F9FAFB',
+                boil: 2.5,
+                strokeWidth: 3,
+              },
+              title: {
+                text: '2. 設計多層檢查',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="ai-code-review-zh-5"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'risk',
+                position: 'center',
+                color: '#F9FAFB',
+                boil: 2.5,
+                strokeWidth: 3,
+              },
+              title: {
+                text: '3. 根據改動風險，安排人工審查',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="ai-code-review-zh-6"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'loop',
+                position: 'center',
+                color: '#F9FAFB',
+                boil: 2.5,
+                strokeWidth: 3,
+              },
+              title: {
+                text: '4. 避免 AI 互審反覆修改',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="ai-code-review-zh-7"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'learn',
+                position: 'center',
+                color: '#F9FAFB',
+                boil: 2.5,
+                strokeWidth: 3,
+              },
+              title: {
+                text: '5. 搜集造成錯誤的原因，讓 AI 學習',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="ai-code-review-zh-8"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'direction',
+                position: 'center',
+                color: '#F9FAFB',
+                boil: 2.5,
+                strokeWidth: 3,
+              },
+              title: {
+                text: '6. 人類還是需要負責方向與結果',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="ai-code-review-zh-9"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'reply',
+                color: '#F9FAFB',
+                boil: 2.5,
+                strokeWidth: 3,
+              },
+              title: {
+                text: '留言「Review」 我把完整文章傳給你！',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              subtitle: {
+                text: '來源：How the Claude Code team does code review',
+                fontSize: 28,
+                color: '#C4C4C4',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+      </Folder>
       <Folder name="layouts">
         <Composition
           id="content"

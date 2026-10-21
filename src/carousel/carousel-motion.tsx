@@ -4,6 +4,7 @@ import type {
   CarouselLang,
   CarouselLayerSettings,
   CarouselMotionLayer,
+  CarouselPost,
   CarouselSlide,
 } from './carousel.type';
 import { CarouselLineArtView } from './carousel-line-art';
@@ -32,10 +33,12 @@ export function CarouselMotion({
   slide,
   lang,
   layers,
+  arts,
 }: {
   slide: Extract<CarouselSlide, { layout: 'motion' }>;
   lang: CarouselLang;
   layers: CarouselLayerSettings;
+  arts: CarouselPost['arts'];
 }) {
   const { position: _, ...motion } = layers.motion ?? DEFAULT_MOTION;
   return (
@@ -63,7 +66,7 @@ export function CarouselMotion({
       </CarouselTitle>
       <Sequence name="Motion" layout="none">
         <div style={{ position: 'relative', width: '100%', height: 460 }}>
-          <CarouselLineArtView {...motion} align="center" />
+          <CarouselLineArtView {...motion} arts={arts} align="center" />
         </div>
       </Sequence>
       <Sequence name="Caption" layout="none">
@@ -88,9 +91,11 @@ export function CarouselMotion({
 export function CarouselTextMotion({
   slide,
   layers,
+  arts,
 }: {
   slide: Extract<CarouselSlide, { layout: 'text-motion' }>;
   layers: CarouselLayerSettings;
+  arts: CarouselPost['arts'];
 }) {
   const { position = 'right', ...motion } = layers.motion ?? DEFAULT_MOTION;
   return (
@@ -112,7 +117,7 @@ export function CarouselTextMotion({
                 : { left: 0, height: 'min(100%, 400px)' }),
             }}
           >
-            <CarouselLineArtView {...motion} align={position} />
+            <CarouselLineArtView {...motion} arts={arts} align={position} />
           </div>
         </div>
       </Sequence>

@@ -51,11 +51,13 @@ export function CarouselSlideView({
   lang,
   layers,
   renderClip,
+  arts,
 }: {
   slide: CarouselSlide;
   lang: CarouselLang;
   layers: CarouselLayerSettings;
   renderClip: CarouselPost['renderClip'];
+  arts?: CarouselPost['arts'];
 }) {
   return (
     <AbsoluteFill
@@ -93,10 +95,10 @@ export function CarouselSlideView({
         <CarouselResult slide={slide} layers={layers} renderClip={renderClip} />
       )}
       {slide.layout === 'motion' && (
-        <CarouselMotion slide={slide} lang={lang} layers={layers} />
+        <CarouselMotion slide={slide} lang={lang} layers={layers} arts={arts} />
       )}
       {slide.layout === 'text-motion' && (
-        <CarouselTextMotion slide={slide} layers={layers} />
+        <CarouselTextMotion slide={slide} layers={layers} arts={arts} />
       )}
       <CarouselFooter />
     </AbsoluteFill>
