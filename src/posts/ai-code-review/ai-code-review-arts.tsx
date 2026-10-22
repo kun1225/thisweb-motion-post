@@ -1,15 +1,17 @@
 import type { ReactNode } from 'react';
-import { Easing, interpolate } from 'remotion';
+import { interpolate } from 'remotion';
 
 import type {
   CarouselLineArtProps,
   CarouselPost,
 } from '../../carousel/carousel.type';
 import { InkPath } from '../../carousel/carousel-ink';
+import { COLOR } from '../../carousel/carousel-parts';
 import {
   ArtSvg,
   CLAMP_EASE,
   circlePath,
+  roundedRect,
 } from '../../carousel/carousel-line-art';
 
 /**
@@ -24,20 +26,23 @@ export const AI_CODE_REVIEW_ARTS: NonNullable<CarouselPost['arts']> = {
   loop: LoopArt,
   learn: LearnArt,
   direction: DirectionArt,
-  reply: ReplyArt,
 };
 
 // *** PointsArt ***
 const POINTS = { count: 6, x: 80, gap: 140, y: 120, r: 16 };
 
 /** Six points joined one by one, like the six ideas in this post. */
-function PointsArt({ progress, color, ...props }: CarouselLineArtProps) {
+function PointsArt({
+  progress,
+  accent = COLOR.text,
+  ...props
+}: CarouselLineArtProps) {
   const last = POINTS.count - 1;
   // Head and tail start before the first dot and end past the last, so every dot is empty at the loop point.
   const head = ramp(progress, 0.05, 0.6) * (last + 0.6) - 0.3;
   const tail = ramp(progress, 0.68, 0.95) * (last + 0.6) - 0.3;
   return (
-    <ArtSvg {...props} color={color} id="points" width={860} height={240}>
+    <ArtSvg {...props} accent={accent} id="points" width={860} height={240}>
       {Array.from({ length: POINTS.count }, (_, i) => {
         const x = POINTS.x + i * POINTS.gap;
         const fill = Math.min(
@@ -47,12 +52,13 @@ function PointsArt({ progress, color, ...props }: CarouselLineArtProps) {
         return (
           <g key={x}>
             <InkPath d={circlePath(x, POINTS.y, POINTS.r)} />
-            <Dot x={x} y={POINTS.y} r={POINTS.r * 0.5 * fill} color={color} />
+            <Dot x={x} y={POINTS.y} r={POINTS.r * 0.5 * fill} color={accent} />
             {i < last && (
               <InkPath
                 d={`M ${x + POINTS.r + 10} ${POINTS.y} H ${x + POINTS.gap - POINTS.r - 10}`}
                 from={clamp01(tail - i)}
                 to={clamp01(head - i)}
+                accent
               />
             )}
           </g>
@@ -85,7 +91,7 @@ function VerifyArt({ progress, ...props }: CarouselLineArtProps) {
       {CODE_WIDTHS.map((width, i) => {
         const x = PAGE.x + 36;
         const y = PAGE.y + 64 + i * 46;
-        return <InkPath key={y} d={`M ${x} ${y} H ${x + width}`} />;
+        return <InkPath key={y} d={`M ${x} ${y} H ${x + width}`} accent />;
       })}
       {SCANS.map(({ range, dashed }) => {
         const t = ramp(progress, range[0], range[1]);
@@ -116,7 +122,11 @@ function VerifyArt({ progress, ...props }: CarouselLineArtProps) {
 const GATES = { count: 6, left: 50, right: 290, top: 50, gap: 46 };
 
 /** A change drops through six gates; each one bends as it checks it. */
-function LayersArt({ progress, color, ...props }: CarouselLineArtProps) {
+function LayersArt({
+  progress,
+  accent = COLOR.text,
+  ...props
+}: CarouselLineArtProps) {
   const middle = (GATES.left + GATES.right) / 2;
   const dotY = 10 + ramp(progress, 0.06, 0.82) * 310;
   const dotOpacity = Math.min(
@@ -124,7 +134,7 @@ function LayersArt({ progress, color, ...props }: CarouselLineArtProps) {
     1 - ramp(progress, 0.82, 0.92),
   );
   return (
-    <ArtSvg {...props} color={color} id="layers" width={340} height={340}>
+    <ArtSvg {...props} accent={accent} id="layers" width={340} height={340}>
       {Array.from({ length: GATES.count }, (_, i) => {
         const y = GATES.top + i * GATES.gap;
         const dip = 16 * Math.exp(-(((dotY - y) / 22) ** 2));
@@ -136,7 +146,7 @@ function LayersArt({ progress, color, ...props }: CarouselLineArtProps) {
         );
       })}
       <g opacity={dotOpacity}>
-        <Dot x={middle} y={dotY} r={9} color={color} />
+        <Dot x={middle} y={dotY} r={9} color={accent} />
       </g>
     </ArtSvg>
   );
@@ -144,6 +154,7 @@ function LayersArt({ progress, color, ...props }: CarouselLineArtProps) {
 
 // *** RiskArt ***
 const RISK_BASE = 340;
+const RISK_FILL = 'rgba(255, 255, 255, 0.12)';
 const RISK_BARS = [
   { x: 270, height: 80, people: 0 },
   { x: 430, height: 160, people: 1 },
@@ -160,8 +171,16 @@ function RiskArt({ progress, ...props }: CarouselLineArtProps) {
         const top = RISK_BASE - height;
         const start = 0.05 + i * 0.14;
         const pop = ramp(progress, start + 0.17, start + 0.25) * (1 - erase);
+        // The fill waits for the outline, so the bar is drawn first and then filled.
+        const fill = ramp(progress, start + 0.14, start + 0.24) * (1 - erase);
         return (
           <g key={x}>
+            <path
+              d={`M ${x - 50} ${RISK_BASE} V ${top} H ${x + 50} V ${RISK_BASE} Z`}
+              fill={RISK_FILL}
+              stroke="none"
+              opacity={fill}
+            />
             <InkPath
               d={`M ${x - 50} ${RISK_BASE} V ${top} H ${x + 50} V ${RISK_BASE}`}
               from={erase}
@@ -173,7 +192,7 @@ function RiskArt({ progress, ...props }: CarouselLineArtProps) {
             >
               {people === 0 ? (
                 // No people: the AI checks are enough.
-                <InkPath d="M -22 -34 L -6 -18 L 24 -50" />
+                <InkPath d="M -22 -34 L -6 -18 L 24 -50" accent />
               ) : (
                 Array.from({ length: people }, (_, p) => (
                   <Person key={p} x={(p - (people - 1) / 2) * 56} />
@@ -190,8 +209,8 @@ function RiskArt({ progress, ...props }: CarouselLineArtProps) {
 function Person({ x }: { x: number }) {
   return (
     <>
-      <InkPath d={circlePath(x, -56, 13)} />
-      <InkPath d={`M ${x - 22} -16 A 22 22 0 0 1 ${x + 22} -16`} />
+      <InkPath d={circlePath(x, -56, 13)} accent />
+      <InkPath d={`M ${x - 22} -16 A 22 22 0 0 1 ${x + 22} -16`} accent />
     </>
   );
 }
@@ -319,7 +338,11 @@ function LearnArt({ progress, ...props }: CarouselLineArtProps) {
                 transform={`translate(${x} ${y}) scale(${scale})`}
                 visibility={scale > 0 && rule === 0 ? 'visible' : 'hidden'}
               />
-              <InkPath d={`M ${ruleX} ${ruleY} H ${ruleX + width}`} to={rule} />
+              <InkPath
+                d={`M ${ruleX} ${ruleY} H ${ruleX + width}`}
+                to={rule}
+                accent
+              />
             </g>
           );
         })}
@@ -329,74 +352,50 @@ function LearnArt({ progress, ...props }: CarouselLineArtProps) {
 }
 
 // *** DirectionArt ***
-const COMPASS = { x: 430, y: 180, r: 150 };
-const HEADINGS = [-35, 30, -15, 50];
-const SWING = Easing.out(Easing.back(1.8));
+const BOAT = { x: 440, y: 270, bob: 6, tilt: 3, cycles: 2 };
+const WAVES = [
+  { y: 305, left: 220, right: 660, phase: 0 },
+  { y: 340, left: 290, right: 590, phase: Math.PI },
+];
+const WAVE = { length: 120, height: 10, cycles: 3 };
 
-/** A compass needle swings to a new heading, settles, and swings again. */
-function DirectionArt({ progress, color, ...props }: CarouselLineArtProps) {
-  const step = Math.floor(progress * HEADINGS.length) % HEADINGS.length;
-  const t = progress * HEADINGS.length - Math.floor(progress * HEADINGS.length);
-  const turn = interpolate(t, [0, 0.5], [0, 1], {
-    easing: SWING,
-    extrapolateRight: 'clamp',
-  });
-  const from = HEADINGS[step] ?? 0;
-  const to = HEADINGS[(step + 1) % HEADINGS.length] ?? 0;
+/** A boat sails on, rocking on waves that flow past it. */
+function DirectionArt({
+  progress,
+  accent = COLOR.text,
+  ...props
+}: CarouselLineArtProps) {
+  // Whole cycles only, so the last frame matches the first.
+  const rock = 2 * Math.PI * BOAT.cycles * progress;
+  const flow = 2 * Math.PI * WAVE.cycles * progress;
   return (
-    <ArtSvg {...props} color={color} id="direction" width={860} height={360}>
-      <InkPath d={circlePath(COMPASS.x, COMPASS.y, COMPASS.r)} />
-      {[0, 90, 180, 270].map((tick) => (
-        <InkPath
-          key={tick}
-          d={`M 0 ${-COMPASS.r} V ${-COMPASS.r + 20}`}
-          transform={`translate(${COMPASS.x} ${COMPASS.y}) rotate(${tick})`}
-        />
-      ))}
+    <ArtSvg {...props} accent={accent} id="direction" width={860} height={360}>
       <g
-        transform={`translate(${COMPASS.x} ${COMPASS.y}) rotate(${from + (to - from) * turn})`}
+        transform={`translate(0 ${BOAT.bob * Math.sin(rock)}) rotate(${BOAT.tilt * Math.cos(rock)} ${BOAT.x} ${BOAT.y})`}
       >
-        <InkPath d="M 0 -112 L 18 0 L 0 112 L -18 0 Z" />
-        <path d="M 0 -112 L 18 0 L -18 0 Z" fill={color} stroke="none" />
+        <path d="M 430 80 L 430 235 L 335 235 Z" fill={accent} stroke="none" />
+        <InkPath d="M 430 80 L 430 235 L 335 235 Z" />
+        <InkPath d="M 452 100 L 452 235 L 525 235 Z" />
+        <InkPath d={`M ${BOAT.x} 250 V 66`} />
+        <InkPath d="M 320 250 H 550 L 508 290 H 356 Z" />
       </g>
-      <Dot x={COMPASS.x} y={COMPASS.y} r={7} color={color} />
+      {WAVES.map((wave) => (
+        <InkPath key={wave.y} d={wavePath(wave, flow + wave.phase)} />
+      ))}
     </ArtSvg>
   );
 }
 
-// *** ReplyArt ***
-const BUBBLE_PATH =
-  'M 330 100 H 530 A 40 40 0 0 1 570 140 V 260 A 40 40 0 0 1 530 300 H 380 L 320 360 L 335 300 H 330 A 40 40 0 0 1 290 260 V 140 A 40 40 0 0 1 330 100 Z';
-
-/** A speech bubble draws itself, and three dots type a reply. */
-function ReplyArt({ progress, color, ...props }: CarouselLineArtProps) {
-  const hide = 1 - ramp(progress, 0.7, 0.76);
-  return (
-    <ArtSvg {...props} color={color} id="reply" width={860} height={460}>
-      <InkPath
-        d={BUBBLE_PATH}
-        from={ramp(progress, 0.72, 0.95)}
-        to={ramp(progress, 0.04, 0.38)}
-      />
-      {[0, 1, 2].map((i) => {
-        const start = 0.4 + i * 0.06;
-        const size = ramp(progress, start, start + 0.06) * hide;
-        const bounce = Math.max(
-          0,
-          Math.sin(2 * Math.PI * (progress * 5 - i / 6)),
-        );
-        return (
-          <Dot
-            key={i}
-            x={370 + i * 60}
-            y={200 - 10 * bounce}
-            r={13 * size}
-            color={color}
-          />
-        );
-      })}
-    </ArtSvg>
-  );
+function wavePath({ y, left, right }: (typeof WAVES)[number], phase: number) {
+  const steps = Math.ceil((right - left) / 8);
+  const points = Array.from({ length: steps + 1 }, (_, i) => {
+    const x = left + ((right - left) * i) / steps;
+    // Adding the phase moves the crests left, so the boat looks like it heads right.
+    const waveY =
+      y + WAVE.height * Math.sin((2 * Math.PI * x) / WAVE.length + phase);
+    return `${x.toFixed(1)} ${waveY.toFixed(1)}`;
+  });
+  return `M ${points.join(' L ')}`;
 }
 
 // *** Shared ***
@@ -421,8 +420,4 @@ function ramp(progress: number, from: number, to: number) {
 
 function clamp01(value: number) {
   return Math.min(Math.max(value, 0), 1);
-}
-
-function roundedRect(x: number, y: number, w: number, h: number, r: number) {
-  return `M ${x + r} ${y} H ${x + w - r} A ${r} ${r} 0 0 1 ${x + w} ${y + r} V ${y + h - r} A ${r} ${r} 0 0 1 ${x + w - r} ${y + h} H ${x + r} A ${r} ${r} 0 0 1 ${x} ${y + h - r} V ${y + r} A ${r} ${r} 0 0 1 ${x + r} ${y} Z`;
 }
