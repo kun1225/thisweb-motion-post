@@ -32,7 +32,7 @@ export const DEFAULT_MOTION: CarouselMotionLayer = {
 };
 
 // Clears the footer, so centred text never sits on it.
-const CENTRED_INSET = `130px ${PAD_X}px 210px`;
+export const CENTRED_INSET = `130px ${PAD_X}px 210px`;
 
 /** A short statement on top, line art in the middle, a small caption below. All centred. */
 export function CarouselMotion({

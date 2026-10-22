@@ -8,6 +8,7 @@ import type {
   CarouselPost,
 } from './carousel.type';
 import { InkContext, InkPath } from './carousel-ink';
+import { COLOR } from './carousel-parts';
 
 export const CAROUSEL_LINE_ARTS: CarouselLineArt[] = [
   'draw',
@@ -64,7 +65,15 @@ function DrawArt({ progress, ...props }: CarouselLineArtProps) {
         {DRAW_STROKES.map((stroke) => {
           const from = strokeShare(tail, stroke);
           const to = strokeShare(head, stroke);
-          return <InkPath key={stroke.d} d={stroke.d} from={from} to={to} />;
+          return (
+            <InkPath
+              key={stroke.d}
+              d={stroke.d}
+              from={from}
+              to={to}
+              accent={stroke.accent}
+            />
+          );
         })}
       </g>
     </ArtSvg>
@@ -76,7 +85,11 @@ const TICKS = 4;
 const MOVE = 0.6;
 
 /** The square ticks a quarter turn, rests, and ticks again. Four ticks make one loop. */
-function TurnArt({ progress, color, ...props }: CarouselLineArtProps) {
+function TurnArt({
+  progress,
+  accent = COLOR.text,
+  ...props
+}: CarouselLineArtProps) {
   const step = Math.floor(progress * TICKS);
   const t = progress * TICKS - step;
   const turn = interpolate(t, [0, MOVE], [0, 1], {
@@ -86,7 +99,7 @@ function TurnArt({ progress, color, ...props }: CarouselLineArtProps) {
   return (
     <ArtSvg
       {...props}
-      color={color}
+      accent={accent}
       id="turn"
       width={SQUARE_BOX}
       height={SQUARE_BOX}
@@ -95,7 +108,7 @@ function TurnArt({ progress, color, ...props }: CarouselLineArtProps) {
         <InkPath d={SQUARE_PATH} />
         <path
           d={circlePath(DOT.x, DOT.y, DOT.r * 0.45)}
-          fill={color}
+          fill={accent}
           stroke="none"
         />
       </g>
@@ -117,7 +130,7 @@ function FieldArt({ progress, strokeWidth, ...props }: CarouselLineArtProps) {
       height={FIELD.height}
     >
       {Array.from({ length: FIELD.lines }, (_, i) => (
-        <InkPath key={i} d={fieldLine(i, progress)} />
+        <InkPath key={i} d={fieldLine(i, progress)} accent={i % 3 === 1} />
       ))}
     </ArtSvg>
   );
@@ -151,7 +164,13 @@ function SwingArt({ progress, ...props }: CarouselLineArtProps) {
         const x = 2 * SWING.r + i * gap;
         const swing = Math.sin(2 * Math.PI * progress * (SWING.laps + i));
         const y = SWING.height / 2 - SWING.reach * swing;
-        return <InkPath key={x} d={circlePath(x, y, SWING.r)} />;
+        return (
+          <InkPath
+            key={x}
+            d={circlePath(x, y, SWING.r)}
+            accent={i === (SWING.balls - 1) / 2}
+          />
+        );
       })}
     </ArtSvg>
   );
@@ -180,7 +199,11 @@ function SpinArt({ progress, ...props }: CarouselLineArtProps) {
           // A coin seen edge-on is a line; 2 keeps the ellipse from collapsing to nothing.
           const width = Math.max(Math.abs(turn) * r, 2);
           return (
-            <InkPath key={`${y}-${ring}`} d={ellipsePath(x, y, width, r)} />
+            <InkPath
+              key={`${y}-${ring}`}
+              d={ellipsePath(x, y, width, r)}
+              accent={ring === RINGS[1]}
+            />
           );
         });
       })}
@@ -200,6 +223,16 @@ export function circlePath(x: number, y: number, r: number) {
   return ellipsePath(x, y, r, r);
 }
 
+export function roundedRect(
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+) {
+  return `M ${x + r} ${y} H ${x + w - r} A ${r} ${r} 0 0 1 ${x + w} ${y + r} V ${y + h - r} A ${r} ${r} 0 0 1 ${x + w - r} ${y + h} H ${x + r} A ${r} ${r} 0 0 1 ${x} ${y + h - r} V ${y + r} A ${r} ${r} 0 0 1 ${x + r} ${y} Z`;
+}
+
 function ellipsePath(x: number, y: number, rx: number, ry: number) {
   return `M ${x - rx} ${y} A ${rx} ${ry} 0 1 0 ${x + rx} ${y} A ${rx} ${ry} 0 1 0 ${x - rx} ${y}`;
 }
@@ -208,11 +241,12 @@ function ellipsePath(x: number, y: number, rx: number, ry: number) {
 const SQUARE_LENGTH = 8 * SQUARE_HALF;
 const DOT_LENGTH = 2 * Math.PI * DOT.r;
 const DRAW_STROKES = [
-  { d: SQUARE_PATH, start: 0, length: SQUARE_LENGTH },
+  { d: SQUARE_PATH, start: 0, length: SQUARE_LENGTH, accent: false },
   {
     d: circlePath(DOT.x, DOT.y, DOT.r),
     start: SQUARE_LENGTH,
     length: DOT_LENGTH,
+    accent: true,
   },
 ];
 
@@ -243,6 +277,7 @@ export function ArtSvg({
   height,
   align,
   color,
+  accent = COLOR.text,
   boil,
   strokeWidth,
   children,
@@ -272,7 +307,7 @@ export function ArtSvg({
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        <InkContext value={{ color, width: strokeWidth }}>
+        <InkContext value={{ color, accent, width: strokeWidth }}>
           {children}
         </InkContext>
       </g>

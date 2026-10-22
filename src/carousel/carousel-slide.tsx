@@ -30,6 +30,7 @@ import {
   CarouselMotion,
   CarouselTextMotion,
 } from './carousel-motion';
+import { CarouselOutro } from './carousel-outro';
 import {
   COLOR,
   CONTENT_WIDTH,
@@ -46,7 +47,7 @@ import {
 export { CAROUSEL_SIZE } from './carousel-parts';
 export const CAROUSEL_FPS = 30;
 
-/** One ThisWeb carousel slide. Text never animates; only the media and line art move. */
+/** One ThisWeb carousel slide. Text never moves; only highlights change colour, and the media and line art move. */
 export function CarouselSlideView({
   slide,
   lang,
@@ -104,6 +105,9 @@ export function CarouselSlideView({
       {slide.layout === 'text-motion' && (
         <CarouselTextMotion slide={slide} layers={layers} arts={arts} />
       )}
+      {slide.layout === 'outro' && (
+        <CarouselOutro slide={slide} lang={lang} layers={layers} />
+      )}
       <CarouselFooter />
     </AbsoluteFill>
   );
@@ -111,7 +115,11 @@ export function CarouselSlideView({
 
 /** A slide lasts as long as its media, so it plays without a jump. One frame means a still. */
 export function carouselSlideDuration(slide: CarouselSlide) {
-  if (slide.layout === 'motion' || slide.layout === 'text-motion') {
+  if (
+    slide.layout === 'motion' ||
+    slide.layout === 'text-motion' ||
+    slide.layout === 'outro'
+  ) {
     return CAROUSEL_MOTION_FRAMES;
   }
   const media = 'media' in slide ? slide.media : null;

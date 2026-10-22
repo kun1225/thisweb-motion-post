@@ -4,6 +4,7 @@ import type { LayoutPreviewProps } from './layout-preview.type';
 import {
   CONTENT_SAMPLE,
   LIST_SAMPLE,
+  OUTRO_SAMPLE,
   TEXT_MOTION_SAMPLE,
   TEXT_SAMPLE,
 } from './layout-samples';
@@ -81,6 +82,22 @@ export function TextMotionPreview({ layers, lang = 'zh' }: LayoutPreviewProps) {
         layout: 'text-motion',
         title: layers.title.text,
         body: TEXT_MOTION_SAMPLE[lang],
+      }}
+      lang={lang}
+      layers={layers}
+      renderClip={undefined}
+    />
+  );
+}
+
+export function OutroPreview({ layers, lang = 'zh' }: LayoutPreviewProps) {
+  return (
+    <CarouselSlideView
+      slide={{
+        layout: 'outro',
+        title: layers.title.text,
+        ...OUTRO_SAMPLE[lang],
+        note: layers.subtitle?.text ?? OUTRO_SAMPLE[lang].note,
       }}
       lang={lang}
       layers={layers}

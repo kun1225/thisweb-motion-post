@@ -30,13 +30,14 @@ Studio saves edits to that slide's `defaultProps` in `src/root.tsx`. Each compos
 
 ## Structure
 
-- `src/carousel/`: the shared ThisWeb look (background, title, footer, media box) and six layouts:
+- `src/carousel/`: the shared ThisWeb look (background, title, footer, media box) and seven layouts:
   - `cover`: subtitle, big title, media
   - `content`: title, body, media. With `media: { kind: 'none' }` it is a pure text slide.
   - `list`: title, optional lead `body`, and items in one of four `listLayout`s
   - `result`: title, media, tip list
   - `motion`: a short centred statement, line art, and a small `caption`
   - `text-motion`: title and body, with line art below, above, or across the whole slide (see `position`)
+  - `outro`: a short closing title, a `cta` inside a hand-inked box that draws itself (`**keyword**` is highlighted), a small `note`, and an optional `source`. The `note` comes from `layers.subtitle`.
 - `src/posts/<post-id>/`: one folder per post. It has the slide text and any animations of its own.
 - `src/posts/index.ts`: the post data and animations used by the compositions.
 - `src/covers/`: sample covers for trying layouts and backgrounds without a real post.
@@ -50,9 +51,9 @@ The **covers** folder in Studio shows each cover layout with sample text and a d
 
 ## Layout previews
 
-The **layouts** folder in Studio shows the other layouts with sample 繁中 text: `content` (a dashed box where the media goes, like `cover-stack`; change `layers.media.ratio` to try other media shapes), `text`, `list-icon`, `list-cards`, `list-ruled`, `list-steps`, `motion`, `text-motion`, `text-motion-top`, and `text-motion-full`. Set `lang` to `en` for the English sample. The title comes from `layers.title`; the `motion` caption comes from `layers.subtitle`.
+The **layouts** folder in Studio shows the other layouts with sample 繁中 text: `content` (a dashed box where the media goes, like `cover-stack`; change `layers.media.ratio` to try other media shapes), `text`, `list-icon`, `list-cards`, `list-ruled`, `list-steps`, `motion`, `text-motion`, `text-motion-top`, `text-motion-full`, and `outro`. Set `lang` to `en` for the English sample. The title comes from `layers.title`; the `motion` caption comes from `layers.subtitle`.
 
-`motion` and `text-motion` slides last 8 seconds and render as MP4. The line art makes one full cycle per slide, so it loops without a jump.
+`motion`, `text-motion`, and `outro` slides last 8 seconds and render as MP4. The line art makes one full cycle per slide, so it loops without a jump.
 
 ## List icons
 

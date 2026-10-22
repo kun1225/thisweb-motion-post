@@ -54,6 +54,9 @@ function resolveCarouselComposition(
   if (slide.layout === 'motion' && layers.subtitle) {
     slide.caption = layers.subtitle.text;
   }
+  if (slide.layout === 'outro' && layers.subtitle) {
+    slide.note = layers.subtitle.text;
+  }
   if ('media' in slide && slide.media.kind === 'video') {
     slide.media = {
       ...slide.media,

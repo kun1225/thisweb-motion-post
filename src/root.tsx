@@ -15,6 +15,7 @@ import {
   ContentPreview,
   ListPreview,
   MotionPreview,
+  OutroPreview,
   TextMotionPreview,
   TextPreview,
 } from './layouts/layout-preview';
@@ -66,7 +67,7 @@ export function RemotionRoot() {
                 strokeWidth: 3,
               },
               title: {
-                text: '6 個重點',
+                text: 'Anthropic 如何 Code Review?',
                 fontSize: 54,
                 color: '#31E8FF',
                 x: 0,
@@ -247,23 +248,17 @@ export function RemotionRoot() {
           component={CarouselComposition}
           defaultProps={{
             layers: {
-              motion: {
-                art: 'reply',
-                color: '#E5E7EB',
-                boil: 2.5,
-                strokeWidth: 3,
-              },
               title: {
-                text: '留言「Review」 我把完整文章傳給你！',
+                text: '想看完整文章嗎？',
                 fontSize: 54,
                 color: '#31E8FF',
                 x: 0,
                 y: 0,
               },
               subtitle: {
-                text: '來源：How the Claude Code team does code review',
-                fontSize: 28,
-                color: '#C4C4C4',
+                text: '我把文章私訊給你～！',
+                fontSize: 40,
+                color: '#F9FAFB',
                 x: 0,
                 y: 0,
               },
@@ -430,6 +425,33 @@ export function RemotionRoot() {
                 text: 'Kent Beck',
                 fontSize: 28,
                 color: '#C4C4C4',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          fps={CAROUSEL_FPS}
+          durationInFrames={CAROUSEL_MOTION_FRAMES}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="outro"
+          component={OutroPreview}
+          defaultProps={{
+            lang: 'zh',
+            layers: {
+              title: {
+                text: '想看完整文章嗎？',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              subtitle: {
+                text: '我把文章私訊給你～！',
+                fontSize: 40,
+                color: '#F9FAFB',
                 x: 0,
                 y: 0,
               },

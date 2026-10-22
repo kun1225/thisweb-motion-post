@@ -46,6 +46,8 @@ export type CarouselMotionLayer = {
   /** `text-motion` slides only. */
   position?: CarouselMotionPosition;
   color: string;
+  /** The second ink colour, for the lines an art marks with `accent`. White when unset. */
+  accent?: string;
   /** Hand-drawn wobble in pixels; 0 turns it off. */
   boil: number;
   strokeWidth: number;
@@ -138,7 +140,17 @@ export type CarouselSlide =
   | { layout: 'list'; title: string; body?: string; items: CarouselListItem[] }
   | { layout: 'result'; title: string; tips: string[]; media: CarouselMedia }
   | { layout: 'motion'; title: string; caption: string }
-  | { layout: 'text-motion'; title: string; body: string };
+  | { layout: 'text-motion'; title: string; body: string }
+  | {
+      layout: 'outro';
+      title: string;
+      /** The text inside the inked box. Use **highlight** for the keyword to comment. */
+      cta: string;
+      /** The small closing line below the box. */
+      note: string;
+      /** Where the post comes from, in small muted text at the very bottom. */
+      source?: string;
+    };
 
 export type CarouselPost = {
   /** Kebab-case; also the composition id prefix and the output folder. */

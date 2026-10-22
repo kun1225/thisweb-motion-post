@@ -3,24 +3,33 @@ import type { SVGProps } from 'react';
 import { getSubpaths } from '@remotion/paths';
 import { getStroke } from 'perfect-freehand';
 
-/** The ink colour and average line width, set by `ArtSvg` for every `InkPath` inside it. */
-export const InkContext = createContext({ color: '#F9FAFB', width: 3 });
+/** The ink colours and average line width, set by `ArtSvg` for every `InkPath` inside it. */
+export const InkContext = createContext({
+  color: '#F9FAFB',
+  accent: '#F9FAFB',
+  width: 3,
+});
 
 /**
  * A hand-inked line: it swells and thins along the way and tapers at loose ends, like a brush pen.
  * `from` and `to` (0 to 1 along each subpath) show only part of it, for lines that draw themselves.
+ * `accent` draws it in the second ink colour.
  */
 export function InkPath({
   d,
   from = 0,
   to = 1,
+  accent = false,
   ...rest
 }: Omit<SVGProps<SVGPathElement>, 'd' | 'from' | 'to'> & {
   d: string;
   from?: number;
   to?: number;
+  accent?: boolean;
 }) {
-  const { color, width } = useContext(InkContext);
+  const ink = useContext(InkContext);
+  const { width } = ink;
+  const color = accent ? ink.accent : ink.color;
   if (to <= from) return null;
   const outline = getSubpaths(d)
     .map((subpath) => inkOutline(subpath, from, to, width))

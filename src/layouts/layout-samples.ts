@@ -60,6 +60,12 @@ export const CONTENT_SAMPLE: Record<CarouselLang, string> = {
   en: 'Each click makes the card **expand smoothly** into place instead of jumping there.',
 };
 
+export const OUTRO_SAMPLE: Record<CarouselLang, { cta: string; note: string }> =
+  {
+    zh: { cta: '留言：**關鍵字**', note: '我把文章私訊給你～！' },
+    en: { cta: 'Comment: **keyword**', note: 'I’ll DM you the full post!' },
+  };
+
 export const TEXT_MOTION_SAMPLE: Record<CarouselLang, string> = {
   zh: '**多個 Agent 按照固定順序執行**，系統會將任務拆成多個階段，前一個 Agent 的輸出會成為下一個 Agent 的輸入。\n\n流程穩定、容易測試，但前一步出錯也會影響後續結果。',
   en: '**Agents run in a fixed order.** The task is split into stages, and each agent’s output becomes the next agent’s input.\n\nIt is stable and easy to test, but one bad step breaks every step after it.',
