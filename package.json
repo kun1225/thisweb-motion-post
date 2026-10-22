@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "remotion studio src/index.ts",
-    "studio": "remotion studio src/index.ts",
+    "dev": "remotion studio src/index.ts --port 3300",
+    "studio": "remotion studio src/index.ts --port 3300",
     "render": "./scripts/render-post.sh",
     "check-types": "tsc --noEmit"
   },
