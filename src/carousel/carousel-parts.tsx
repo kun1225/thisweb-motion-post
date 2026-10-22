@@ -60,7 +60,7 @@ export function CarouselTitle({
       <h1
         style={{
           margin: 0,
-          fontSize: 54,
+          fontSize: 60,
           lineHeight: 1.3,
           fontWeight: 700,
           color: COLOR.title,

@@ -190,7 +190,7 @@ function CoverStack({ slide, lang, layers, renderClip }: CarouselCoverProps) {
             marginTop: 28,
             fontSize: COVER_TEXT_SIZE.stack.title,
             fontFamily: FONT[lang].serif,
-            fontWeight: 600,
+            fontWeight: 700,
             color: COLOR.title,
           }}
         >
@@ -226,7 +226,7 @@ function CoverSplit({ slide, lang, layers }: CarouselCoverProps) {
           fontSize: COVER_TEXT_SIZE.split.title,
           lineHeight: 1.05,
           fontFamily: FONT[lang].serif,
-          fontWeight: 600,
+          fontWeight: 700,
           color: COLOR.title,
         }}
       >
@@ -268,7 +268,7 @@ function CoverCaption({ slide, lang, layers, renderClip }: CarouselCoverProps) {
           fontSize: COVER_TEXT_SIZE.caption.title,
           lineHeight: 1.15,
           fontFamily: FONT[lang].serif,
-          fontWeight: 600,
+          fontWeight: 700,
           color: COLOR.title,
         }}
       >
@@ -322,7 +322,7 @@ function CoverPoster({ slide, lang, layers }: CarouselCoverProps) {
           fontSize: COVER_TEXT_SIZE.poster.title,
           lineHeight: 1.02,
           fontFamily: FONT[lang].serif,
-          fontWeight: 600,
+          fontWeight: 700,
           color: COLOR.title,
         }}
       >
