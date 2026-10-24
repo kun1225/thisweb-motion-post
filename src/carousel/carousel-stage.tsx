@@ -19,17 +19,21 @@ export function CarouselStage({
   lang,
   background = CONTENT_BACKGROUND_VARIANT,
   highlight = 'sweep',
+  texture,
   children,
 }: {
   lang: CarouselLang;
   background?: CarouselBackgroundVariant;
   highlight?: HighlightVariant;
+  /** Sits over the background and under the content. */
+  texture?: ReactNode;
   children: ReactNode;
 }) {
   return (
     <HighlightContext value={highlight}>
       <AbsoluteFill style={{ color: COLOR.text, fontFamily: FONT[lang].sans }}>
         <CarouselAnimatedBackground variant={background} />
+        {texture}
         {children}
         <CarouselFooter />
       </AbsoluteFill>

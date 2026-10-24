@@ -49,6 +49,7 @@ export function CarouselSlideView({
   renderClip,
   arts,
   highlight,
+  texture,
 }: {
   slide: CarouselSlide;
   lang: CarouselLang;
@@ -56,11 +57,13 @@ export function CarouselSlideView({
   renderClip: CarouselPost['renderClip'];
   arts?: CarouselPost['arts'];
   highlight?: HighlightVariant;
+  texture?: ReactNode;
 }) {
   return (
     <CarouselStage
       lang={lang}
       highlight={highlight}
+      texture={texture}
       background={
         slide.layout === 'cover'
           ? (layers.background ?? DEFAULT_BACKGROUND_VARIANT)

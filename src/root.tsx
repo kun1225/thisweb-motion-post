@@ -20,6 +20,7 @@ import {
   TextPreview,
 } from './layouts/layout-preview';
 import { HighlightPreview } from './text-animations/highlight-preview';
+import { BgTexturePreview } from './bg-textures/bg-texture-preview';
 
 export function RemotionRoot() {
   // Separate nodes let Studio save each slide without changing the others.
@@ -61,7 +62,7 @@ export function RemotionRoot() {
           defaultProps={{
             layers: {
               motion: {
-                art: 'points',
+                art: 'bot',
                 position: 'center',
                 color: '#E5E7EB',
                 boil: 2.5,
@@ -951,6 +952,71 @@ export function RemotionRoot() {
             fontSize: 56,
             lang: 'zh',
           }}
+          fps={CAROUSEL_FPS}
+          durationInFrames={CAROUSEL_MOTION_FRAMES}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+      </Folder>
+      <Folder name="bg-textures">
+        <Composition
+          id="bg-texture-none"
+          component={BgTexturePreview}
+          defaultProps={{ texture: 'none', slide: 3 }}
+          fps={CAROUSEL_FPS}
+          durationInFrames={CAROUSEL_MOTION_FRAMES}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="bg-texture-grain"
+          component={BgTexturePreview}
+          defaultProps={{ texture: 'grain', slide: 3 }}
+          fps={CAROUSEL_FPS}
+          durationInFrames={CAROUSEL_MOTION_FRAMES}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="bg-texture-paper"
+          component={BgTexturePreview}
+          defaultProps={{ texture: 'paper', slide: 3 }}
+          fps={CAROUSEL_FPS}
+          durationInFrames={CAROUSEL_MOTION_FRAMES}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="bg-texture-halftone"
+          component={BgTexturePreview}
+          defaultProps={{ texture: 'halftone', slide: 3 }}
+          fps={CAROUSEL_FPS}
+          durationInFrames={CAROUSEL_MOTION_FRAMES}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="bg-texture-linen"
+          component={BgTexturePreview}
+          defaultProps={{ texture: 'linen', slide: 3 }}
+          fps={CAROUSEL_FPS}
+          durationInFrames={CAROUSEL_MOTION_FRAMES}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="bg-texture-dust"
+          component={BgTexturePreview}
+          defaultProps={{ texture: 'dust', slide: 3 }}
+          fps={CAROUSEL_FPS}
+          durationInFrames={CAROUSEL_MOTION_FRAMES}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="bg-texture-scanline"
+          component={BgTexturePreview}
+          defaultProps={{ texture: 'scanline', slide: 3 }}
           fps={CAROUSEL_FPS}
           durationInFrames={CAROUSEL_MOTION_FRAMES}
           width={CAROUSEL_SIZE.width}
