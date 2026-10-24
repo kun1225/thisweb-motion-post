@@ -1,12 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
-import {
-  AbsoluteFill,
-  Loop,
-  OffthreadVideo,
-  Sequence,
-  staticFile,
-} from 'remotion';
+import { Loop, OffthreadVideo, Sequence, staticFile } from 'remotion';
 
+import type { HighlightVariant } from '../text-animations/highlight.type';
 import type {
   CarouselCoverLayout,
   CarouselCoverProps,
@@ -21,7 +16,6 @@ import type {
 } from './carousel.type';
 import {
   CONTENT_BACKGROUND_VARIANT,
-  CarouselAnimatedBackground,
   DEFAULT_BACKGROUND_VARIANT,
 } from './carousel-background';
 import { CarouselList } from './carousel-list';
@@ -31,12 +25,12 @@ import {
   CarouselTextMotion,
 } from './carousel-motion';
 import { CarouselOutro } from './carousel-outro';
+import { CarouselStage } from './carousel-stage';
 import {
   COLOR,
   CONTENT_WIDTH,
   CarouselBody,
   CarouselColumn,
-  CarouselFooter,
   CarouselRichText,
   CarouselTitle,
   FONT,
@@ -54,27 +48,25 @@ export function CarouselSlideView({
   layers,
   renderClip,
   arts,
+  highlight,
 }: {
   slide: CarouselSlide;
   lang: CarouselLang;
   layers: CarouselLayerSettings;
   renderClip: CarouselPost['renderClip'];
   arts?: CarouselPost['arts'];
+  highlight?: HighlightVariant;
 }) {
   return (
-    <AbsoluteFill
-      style={{
-        color: COLOR.text,
-        fontFamily: FONT[lang].sans,
-      }}
+    <CarouselStage
+      lang={lang}
+      highlight={highlight}
+      background={
+        slide.layout === 'cover'
+          ? (layers.background ?? DEFAULT_BACKGROUND_VARIANT)
+          : CONTENT_BACKGROUND_VARIANT
+      }
     >
-      <CarouselAnimatedBackground
-        variant={
-          slide.layout === 'cover'
-            ? (layers.background ?? DEFAULT_BACKGROUND_VARIANT)
-            : CONTENT_BACKGROUND_VARIANT
-        }
-      />
       {slide.layout === 'cover' && (
         <CarouselCover
           slide={slide}
@@ -108,8 +100,7 @@ export function CarouselSlideView({
       {slide.layout === 'outro' && (
         <CarouselOutro slide={slide} lang={lang} layers={layers} />
       )}
-      <CarouselFooter />
-    </AbsoluteFill>
+    </CarouselStage>
   );
 }
 

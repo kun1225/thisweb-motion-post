@@ -19,6 +19,7 @@ import {
   TextMotionPreview,
   TextPreview,
 } from './layouts/layout-preview';
+import { HighlightPreview } from './text-animations/highlight-preview';
 
 export function RemotionRoot() {
   // Separate nodes let Studio save each slide without changing the others.
@@ -925,6 +926,36 @@ export function RemotionRoot() {
             height={CAROUSEL_SIZE.height}
           />
         </Folder>
+      </Folder>
+      <Folder name="text-animations">
+        <Composition
+          id="highlight-sweep"
+          component={HighlightPreview}
+          defaultProps={{
+            variant: 'sweep',
+            text: '開 PR 前，先讓 AI **跑測試、建置、檢查畫面**，再用**新的上下文**審查改動。',
+            fontSize: 56,
+            lang: 'zh',
+          }}
+          fps={CAROUSEL_FPS}
+          durationInFrames={CAROUSEL_MOTION_FRAMES}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="highlight-underline"
+          component={HighlightPreview}
+          defaultProps={{
+            variant: 'underline',
+            text: '開 PR 前，先讓 AI **跑測試、建置、檢查畫面**，再用**新的上下文**審查改動。',
+            fontSize: 56,
+            lang: 'zh',
+          }}
+          fps={CAROUSEL_FPS}
+          durationInFrames={CAROUSEL_MOTION_FRAMES}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
       </Folder>
     </>
   );

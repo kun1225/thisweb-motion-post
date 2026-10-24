@@ -19,6 +19,7 @@ export function CarouselComposition(props: CarouselCompositionProps) {
       layers={props.layers}
       renderClip={post.renderClip}
       arts={post.arts}
+      highlight={post.highlight}
     />
   );
 }

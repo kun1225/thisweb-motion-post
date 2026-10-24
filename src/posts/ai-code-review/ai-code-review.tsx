@@ -7,6 +7,7 @@ export const aiCodeReviewPost: CarouselPost = {
   id: 'ai-code-review',
   slides: AI_CODE_REVIEW_SLIDES,
   arts: AI_CODE_REVIEW_ARTS,
+  highlight: 'underline',
   renderClip: (id) => {
     if (id === CLAWD_CLIP) return <ClawdHello />;
     throw new Error(`Unknown clip "${id}" in ai-code-review.`);

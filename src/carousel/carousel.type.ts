@@ -1,5 +1,7 @@
 import type { ComponentType, ReactNode } from 'react';
 
+import type { HighlightVariant } from '../text-animations/highlight.type';
+
 export type CarouselLang = 'en' | 'zh';
 
 export type CarouselTextLayer = {
@@ -169,4 +171,6 @@ export type CarouselPost = {
   ) => ReactNode;
   /** Line art drawn for this post only, picked by `layers.motion.art`. */
   arts?: Record<string, (props: CarouselLineArtProps) => ReactNode>;
+  /** How **highlight** text animates on every slide. Defaults to `sweep`. */
+  highlight?: HighlightVariant;
 };
