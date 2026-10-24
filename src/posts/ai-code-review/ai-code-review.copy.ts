@@ -14,7 +14,7 @@ export const AI_CODE_REVIEW_SLIDES: Record<CarouselLang, CarouselSlide[]> = {
     {
       layout: 'text-motion',
       title: '6 個重點',
-      body: 'Anthropic 前幾天分享了 Claude Code 團隊如何用 AI 審查程式碼，分別有 **6 個重點**：\n\n1. 開 PR 前，先讓 AI 驗證過\n2. 設計多層檢查\n3. 根據改動風險，安排人工審查\n4. 避免 AI 互審反覆修改\n5. 搜集造成錯誤的原因，讓 AI 學習\n6. 人類還是需要負責方向與結果',
+      body: 'Anthropic 前幾天分享了 Claude Code 團隊如何用 AI 審查程式碼，分別有 **6 個重點**：\n\n1. 開 PR 前，要先讓 AI 驗證\n2. 設計多層的檢查\n3. 根據改動的風險，來安排人工審查\n4. 避免 AI 互審反覆修改過多輪\n5. 搜集造成錯誤的原因，來讓 AI 學習\n6. 人類仍然需要負責方向與結果',
     },
     {
       layout: 'text-motion',
@@ -34,7 +34,7 @@ export const AI_CODE_REVIEW_SLIDES: Record<CarouselLang, CarouselSlide[]> = {
     {
       layout: 'text-motion',
       title: '4. 避免 AI 互審反覆修改',
-      body: 'Anthropic 曾有一個 PR，來回審查、修改超過 **50 輪**。\n\n所以現在**三輪後**就要重新評估方向，避免重複提出相同問題。',
+      body: 'Anthropic 曾經有一個 PR，來回審查、修改超過 **50 輪**。\n\n所以現在**三輪後**就要重新評估方向，避免重複提出相同問題。',
     },
     {
       layout: 'text-motion',

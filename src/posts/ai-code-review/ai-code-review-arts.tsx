@@ -19,7 +19,7 @@ import {
  * Each one starts and ends empty (or at rest), so the slide loops without a jump.
  */
 export const AI_CODE_REVIEW_ARTS: NonNullable<CarouselPost['arts']> = {
-  points: PointsArt,
+  bot: BotArt,
   verify: VerifyArt,
   layers: LayersArt,
   risk: RiskArt,
@@ -28,42 +28,61 @@ export const AI_CODE_REVIEW_ARTS: NonNullable<CarouselPost['arts']> = {
   direction: DirectionArt,
 };
 
-// *** PointsArt ***
-const POINTS = { count: 6, x: 80, gap: 140, y: 120, r: 16 };
+// *** BotArt ***
+const HEAD = { x: 320, y: 90, w: 220, h: 170, r: 40 };
+const EYES = { y: 165, gap: 46, r: 14 };
+const BLINKS = [
+  [0.52, 0.56],
+  [0.66, 0.7],
+] as const;
 
-/** Six points joined one by one, like the six ideas in this post. */
-function PointsArt({
+/** A bot head draws itself, opens its eyes, blinks twice, then rubs itself out. */
+function BotArt({
   progress,
   accent = COLOR.text,
   ...props
 }: CarouselLineArtProps) {
-  const last = POINTS.count - 1;
-  // Head and tail start before the first dot and end past the last, so every dot is empty at the loop point.
-  const head = ramp(progress, 0.05, 0.6) * (last + 0.6) - 0.3;
-  const tail = ramp(progress, 0.68, 0.95) * (last + 0.6) - 0.3;
+  const middle = HEAD.x + HEAD.w / 2;
+  // Antenna and ears grow out of the head and shrink back into it, so no loose dots show up at their tips.
+  const head = ramp(progress, 0.04, 0.2);
+  const parts = ramp(progress, 0.2, 0.3) * (1 - ramp(progress, 0.8, 0.86));
+  const erase = ramp(progress, 0.86, 0.96);
+  const fade = 1 - ramp(progress, 0.8, 0.86);
+  const eyes = ramp(progress, 0.3, 0.36) * fade;
+  const blinking = BLINKS.some(
+    ([from, to]) => progress >= from && progress < to,
+  );
+  const glow = ramp(progress, 0.36, 0.42) * fade;
   return (
-    <ArtSvg {...props} accent={accent} id="points" width={860} height={240}>
-      {Array.from({ length: POINTS.count }, (_, i) => {
-        const x = POINTS.x + i * POINTS.gap;
-        const fill = Math.min(
-          clamp01((head - i) / 0.3),
-          1 - clamp01((tail - i) / 0.3),
-        );
-        return (
-          <g key={x}>
-            <InkPath d={circlePath(x, POINTS.y, POINTS.r)} />
-            <Dot x={x} y={POINTS.y} r={POINTS.r * 0.5 * fill} color={accent} />
-            {i < last && (
-              <InkPath
-                d={`M ${x + POINTS.r + 10} ${POINTS.y} H ${x + POINTS.gap - POINTS.r - 10}`}
-                from={clamp01(tail - i)}
-                to={clamp01(head - i)}
-                accent
-              />
-            )}
-          </g>
+    <ArtSvg {...props} accent={accent} id="bot" width={860} height={300}>
+      <InkPath
+        d={roundedRect(HEAD.x, HEAD.y, HEAD.w, HEAD.h, HEAD.r)}
+        from={erase}
+        to={head}
+      />
+      <InkPath d={`M ${middle} ${HEAD.y} V ${HEAD.y - 40}`} to={parts} />
+      <InkPath
+        d={`M ${HEAD.x} 150 H ${HEAD.x - 24} V 200 H ${HEAD.x} M ${HEAD.x + HEAD.w} 150 H ${HEAD.x + HEAD.w + 24} V 200 H ${HEAD.x + HEAD.w}`}
+        to={parts}
+      />
+      <Dot x={middle} y={HEAD.y - 52} r={12 * glow} color={accent} />
+      {[-1, 1].map((side) => {
+        const x = middle + side * EYES.gap;
+        return blinking ? (
+          <InkPath
+            key={side}
+            d={`M ${x - EYES.r} ${EYES.y} H ${x + EYES.r}`}
+            accent
+          />
+        ) : (
+          <Dot key={side} x={x} y={EYES.y} r={EYES.r * eyes} color={accent} />
         );
       })}
+      <InkPath
+        d={`M ${middle - 36} 215 Q ${middle} 238 ${middle + 36} 215`}
+        to={ramp(progress, 0.36, 0.44) * fade}
+        accent
+      />
     </ArtSvg>
   );
 }
