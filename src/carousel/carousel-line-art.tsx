@@ -4,6 +4,7 @@ import { Easing, interpolate, useCurrentFrame, useVideoConfig } from 'remotion';
 import type {
   CarouselLineArt,
   CarouselLineArtProps,
+  CarouselMotionLayer,
   CarouselMotionPosition,
   CarouselPost,
 } from './carousel.type';
@@ -22,11 +23,15 @@ export const CAROUSEL_LINE_ARTS: CarouselLineArt[] = [
 export function CarouselLineArtView({
   art,
   arts,
+  x = 0,
+  y = 0,
+  scale = 1,
   ...props
-}: Omit<CarouselLineArtProps, 'progress'> & {
-  art: string;
-  arts: CarouselPost['arts'];
-}) {
+}: Omit<CarouselLineArtProps, 'progress'> &
+  Pick<CarouselMotionLayer, 'x' | 'y' | 'scale'> & {
+    art: string;
+    arts: CarouselPost['arts'];
+  }) {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
   const Art = arts?.[art] ?? ARTS[art as CarouselLineArt];
@@ -36,7 +41,18 @@ export function CarouselLineArtView({
       `Unknown line art "${art}". Use one of: ${names.join(', ')}.`,
     );
   }
-  return <Art {...props} progress={frame / durationInFrames} />;
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        inset: 0,
+        translate: `${x}px ${y}px`,
+        scale,
+      }}
+    >
+      <Art {...props} progress={frame / durationInFrames} />
+    </div>
+  );
 }
 
 const ARTS: Record<

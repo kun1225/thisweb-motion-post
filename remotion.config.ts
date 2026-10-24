@@ -6,3 +6,5 @@ Config.setCrf(16);
 if (process.env.REMOTION_BROWSER_EXECUTABLE) {
   Config.setBrowserExecutable(process.env.REMOTION_BROWSER_EXECUTABLE);
 }
+// The default (7 tabs here) makes some tabs time out on "got no response"; 2 renders reliably.
+Config.setConcurrency(2);

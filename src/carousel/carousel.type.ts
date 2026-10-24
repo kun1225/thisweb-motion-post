@@ -51,11 +51,15 @@ export type CarouselMotionLayer = {
   /** Hand-drawn wobble in pixels; 0 turns it off. */
   boil: number;
   strokeWidth: number;
+  /** Moves the art from where its layout puts it, in pixels. */
+  x?: number;
+  y?: number;
+  scale?: number;
 };
 
 export type CarouselLineArtProps = Omit<
   CarouselMotionLayer,
-  'position' | 'art'
+  'position' | 'art' | 'x' | 'y' | 'scale'
 > & {
   /** 0 at the first frame, approaching 1 at the last. */
   progress: number;
@@ -79,6 +83,8 @@ export type CarouselLayerSettings = {
   /** `motion` and `text-motion` slides only. */
   motion?: CarouselMotionLayer;
   title: CarouselTextLayer;
+  /** The body on `content`, `list`, and `text-motion` slides. */
+  body?: CarouselTextLayer;
   /** The cover subtitle, or the caption on `motion` slides. */
   subtitle?: CarouselTextLayer;
   media?: CarouselMediaLayer;

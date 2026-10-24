@@ -393,7 +393,7 @@ function CarouselContent({
   return (
     <CarouselColumn>
       <CarouselTitle settings={layers.title}>{slide.title}</CarouselTitle>
-      <CarouselBody text={slide.body} />
+      <CarouselBody text={slide.body} settings={layers.body} />
       <CarouselMediaBox
         media={slide.media}
         settings={layers.media}

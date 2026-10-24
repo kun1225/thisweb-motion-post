@@ -48,6 +48,9 @@ function resolveCarouselComposition(
   }
 
   const slide = { ...originalSlide, title: layers.title.text };
+  if ('body' in slide && layers.body) {
+    slide.body = layers.body.text;
+  }
   if (slide.layout === 'cover' && layers.subtitle) {
     slide.subtitle = layers.subtitle.text;
   }

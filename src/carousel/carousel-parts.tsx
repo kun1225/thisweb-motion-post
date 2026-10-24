@@ -80,26 +80,35 @@ export function CarouselTitle({
 }
 
 // *** CarouselBody ***
-export function CarouselBody({ text }: { text: string }) {
+export function CarouselBody({
+  text,
+  settings,
+}: {
+  text: string;
+  settings?: CarouselTextLayer;
+}) {
   return (
-    <p
-      style={{
-        margin: '36px 0 0',
-        fontSize: 40,
-        lineHeight: 1.6,
-        whiteSpace: 'pre-line',
-      }}
-    >
-      {/* Chrome balances only one paragraph of a block, so each paragraph is its own block. */}
-      {text.split('\n\n').map((paragraph, i) => (
-        <span
-          key={i}
-          style={{ display: 'block', marginTop: i === 0 ? 0 : '1.6em' }}
-        >
-          <CarouselRichText text={paragraph} />
-        </span>
-      ))}
-    </p>
+    <Sequence name="Body" layout="none">
+      <p
+        style={{
+          margin: '36px 0 0',
+          fontSize: 40,
+          lineHeight: 1.6,
+          whiteSpace: 'pre-line',
+          ...carouselTextStyle(settings),
+        }}
+      >
+        {/* Chrome balances only one paragraph of a block, so each paragraph is its own block. */}
+        {text.split('\n\n').map((paragraph, i) => (
+          <span
+            key={i}
+            style={{ display: 'block', marginTop: i === 0 ? 0 : '1.6em' }}
+          >
+            <CarouselRichText text={paragraph} />
+          </span>
+        ))}
+      </p>
+    </Sequence>
   );
 }
 

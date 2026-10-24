@@ -40,7 +40,7 @@ export function CarouselList({
   return (
     <CarouselColumn>
       <CarouselTitle settings={layers.title}>{slide.title}</CarouselTitle>
-      {slide.body && <CarouselBody text={slide.body} />}
+      {slide.body && <CarouselBody text={slide.body} settings={layers.body} />}
       <Items items={slide.items} />
     </CarouselColumn>
   );

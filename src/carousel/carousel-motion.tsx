@@ -140,7 +140,7 @@ function TextMotionBelow({
   return (
     <CarouselColumn>
       <CarouselTitle settings={layers.title}>{slide.title}</CarouselTitle>
-      <CarouselBody text={slide.body} />
+      <CarouselBody text={slide.body} settings={layers.body} />
       <Sequence name="Motion" layout="none">
         <div
           style={{ position: 'relative', flex: 1, minHeight: 0, marginTop: 56 }}
@@ -182,7 +182,7 @@ function TextMotionTop({ slide, layers, art }: CarouselTextMotionLayoutProps) {
         </div>
       </Sequence>
       <CarouselTitle settings={layers.title}>{slide.title}</CarouselTitle>
-      <CarouselBody text={slide.body} />
+      <CarouselBody text={slide.body} settings={layers.body} />
     </CarouselColumn>
   );
 }
@@ -203,7 +203,7 @@ function TextMotionFull({ slide, layers, art }: CarouselTextMotionLayoutProps) {
         }}
       >
         <CarouselTitle settings={layers.title}>{slide.title}</CarouselTitle>
-        <CarouselBody text={slide.body} />
+        <CarouselBody text={slide.body} settings={layers.body} />
       </div>
       <Sequence name="Motion" layout="none">
         <div style={{ position: 'absolute', inset: 0 }}>{art}</div>

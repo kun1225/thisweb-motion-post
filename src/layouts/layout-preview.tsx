@@ -16,7 +16,7 @@ export function ContentPreview({ layers, lang = 'zh' }: LayoutPreviewProps) {
       slide={{
         layout: 'content',
         title: layers.title.text,
-        body: CONTENT_SAMPLE[lang],
+        body: layers.body?.text ?? CONTENT_SAMPLE[lang],
         media: {
           kind: 'clip',
           id: 'placeholder',
@@ -39,7 +39,7 @@ export function TextPreview({ layers, lang = 'zh' }: LayoutPreviewProps) {
       slide={{
         layout: 'content',
         title: layers.title.text,
-        body: TEXT_SAMPLE[lang],
+        body: layers.body?.text ?? TEXT_SAMPLE[lang],
         media: { kind: 'none' },
       }}
       lang={lang}
@@ -81,7 +81,7 @@ export function TextMotionPreview({ layers, lang = 'zh' }: LayoutPreviewProps) {
       slide={{
         layout: 'text-motion',
         title: layers.title.text,
-        body: TEXT_MOTION_SAMPLE[lang],
+        body: layers.body?.text ?? TEXT_MOTION_SAMPLE[lang],
       }}
       lang={lang}
       layers={layers}
