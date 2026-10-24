@@ -21,7 +21,7 @@ import {
 export const AI_CODE_REVIEW_ARTS: NonNullable<CarouselPost['arts']> = {
   bot: BotArt,
   verify: VerifyArt,
-  layers: LayersArt,
+  runner: RunnerArt,
   risk: RiskArt,
   loop: LoopArt,
   learn: LearnArt,
@@ -137,38 +137,135 @@ function VerifyArt({ progress, ...props }: CarouselLineArtProps) {
   );
 }
 
-// *** LayersArt ***
-const GATES = { count: 6, left: 50, right: 290, top: 50, gap: 46 };
+// *** RunnerArt ***
+const RUN = {
+  ground: 225,
+  // The stone sits at 3/4 of the 860 wide box.
+  stone: 'M 618 225 C 618 197 638 185 656 187 C 674 189 678 209 678 225',
+  offscreen: -60,
+  tripX: 600,
+  // He lands past the stone, so he doesn't lie on top of it.
+  throwX: 84,
+  stride: 90,
+  lean: 8,
+};
+const RUN_TIMELINE = {
+  forward: [0.03, 0.56],
+  fall: [0.56, 0.64],
+  getUp: [0.76, 0.82],
+  turn: [0.82, 0.85],
+  back: [0.85, 0.97],
+} as const;
+const BODY = { hip: 70, shoulder: 122, head: { y: 148, r: 17 } };
+const LIMB = { thigh: 36, shin: 34, upper: 24, fore: 22 };
 
-/** A change drops through six gates; each one bends as it checks it. */
-function LayersArt({
+type Limb = [angle: number, bend: number];
+type Pose = Record<'legA' | 'legB' | 'armA' | 'armB', Limb>;
+
+const FLOP_POSE: Pose = {
+  legA: [0.5, 0.3],
+  legB: [-0.4, 0.3],
+  armA: [2.6, 0.3],
+  armB: [-2.4, 0.3],
+};
+
+/** A little guy runs right, trips on a stone at 3/4, then gets up and dashes back. */
+function RunnerArt({
   progress,
   accent = COLOR.text,
   ...props
 }: CarouselLineArtProps) {
-  const middle = (GATES.left + GATES.right) / 2;
-  const dotY = 10 + ramp(progress, 0.06, 0.82) * 310;
-  const dotOpacity = Math.min(
-    ramp(progress, 0, 0.06),
-    1 - ramp(progress, 0.82, 0.92),
-  );
+  const { forward, fall, getUp, turn, back } = RUN_TIMELINE;
+  const trip = ramp(progress, ...fall) ** 2;
+  const rise = ramp(progress, ...getUp);
+  const down = trip * (1 - rise);
+  const facing = 1 - 2 * ramp(progress, ...turn);
+  const dash = line(progress, ...back);
+  const x =
+    dash > 0
+      ? lerp(RUN.tripX + RUN.throwX, RUN.offscreen, dash)
+      : lerp(RUN.offscreen, RUN.tripX, line(progress, ...forward)) +
+        RUN.throwX * trip;
+  // Hop over the stone on the way back.
+  const hop =
+    50 * Math.sin(Math.PI * clamp01((694 - x) / 90)) * (dash > 0 ? 1 : 0);
+  const stumble = 24 * Math.sin(Math.PI * trip) * (1 - rise);
+  const angle = RUN.lean + (90 - RUN.lean) * down;
+  const y = RUN.ground - hop - stumble - 10 * down;
+  const phase = (2 * Math.PI * x * facing) / RUN.stride;
   return (
-    <ArtSvg {...props} accent={accent} id="layers" width={340} height={340}>
-      {Array.from({ length: GATES.count }, (_, i) => {
-        const y = GATES.top + i * GATES.gap;
-        const dip = 16 * Math.exp(-(((dotY - y) / 22) ** 2));
-        return (
-          <InkPath
-            key={y}
-            d={`M ${GATES.left} ${y} Q ${middle} ${y + 2 * dip} ${GATES.right} ${y}`}
-          />
-        );
-      })}
-      <g opacity={dotOpacity}>
-        <Dot x={middle} y={dotY} r={9} color={accent} />
+    <ArtSvg {...props} accent={accent} id="runner" width={860} height={240}>
+      <InkPath d={`M 20 ${RUN.ground} H 840`} />
+      <InkPath d={RUN.stone} />
+      <g transform={`translate(${x} ${y}) scale(${facing} 1) rotate(${angle})`}>
+        <Runner
+          pose={mixPose(runPose(phase), FLOP_POSE, down)}
+          accent={accent}
+        />
       </g>
     </ArtSvg>
   );
+}
+
+function Runner({ pose, accent }: { pose: Pose; accent: string }) {
+  const hip = { x: 0, y: -BODY.hip };
+  const shoulder = { x: 0, y: -BODY.shoulder };
+  return (
+    <>
+      <InkPath d={circlePath(0, -BODY.head.y, BODY.head.r)} accent />
+      <InkPath d={`M ${shoulder.x} ${shoulder.y} V ${hip.y}`} />
+      <InkPath d={limbPath(hip, pose.legA, LIMB.thigh, LIMB.shin)} />
+      <InkPath d={limbPath(hip, pose.legB, LIMB.thigh, LIMB.shin)} />
+      <InkPath d={limbPath(shoulder, pose.armA, LIMB.upper, LIMB.fore)} />
+      <InkPath d={limbPath(shoulder, pose.armB, LIMB.upper, LIMB.fore)} />
+    </>
+  );
+}
+
+function runPose(phase: number): Pose {
+  // The knee bends most while the leg swings forward, and each arm swings against its leg.
+  const leg = (p: number): Limb => [
+    0.75 * Math.sin(p),
+    0.2 + 0.9 * Math.max(0, Math.cos(p)),
+  ];
+  const arm = (p: number): Limb => [-0.9 * Math.sin(p), -1.2];
+  return {
+    legA: leg(phase),
+    legB: leg(phase + Math.PI),
+    armA: arm(phase),
+    armB: arm(phase + Math.PI),
+  };
+}
+
+function mixPose(from: Pose, to: Pose, t: number): Pose {
+  const mix = (a: Limb, b: Limb): Limb => [
+    lerp(a[0], b[0], t),
+    lerp(a[1], b[1], t),
+  ];
+  return {
+    legA: mix(from.legA, to.legA),
+    legB: mix(from.legB, to.legB),
+    armA: mix(from.armA, to.armA),
+    armB: mix(from.armB, to.armB),
+  };
+}
+
+/** Angles are from straight down; the bend swings the lower part back. */
+function limbPath(
+  from: Point,
+  [angle, bend]: Limb,
+  upper: number,
+  lower: number,
+) {
+  const mid = {
+    x: from.x + upper * Math.sin(angle),
+    y: from.y + upper * Math.cos(angle),
+  };
+  const end = {
+    x: mid.x + lower * Math.sin(angle - bend),
+    y: mid.y + lower * Math.cos(angle - bend),
+  };
+  return `M ${from.x} ${from.y} L ${mid.x} ${mid.y} L ${end.x} ${end.y}`;
 }
 
 // *** RiskArt ***
@@ -435,6 +532,17 @@ function Dot({
 
 function ramp(progress: number, from: number, to: number) {
   return interpolate(progress, [from, to], [0, 1], CLAMP_EASE);
+}
+
+function line(progress: number, from: number, to: number) {
+  return interpolate(progress, [from, to], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+}
+
+function lerp(from: number, to: number, t: number) {
+  return from + (to - from) * t;
 }
 
 function clamp01(value: number) {

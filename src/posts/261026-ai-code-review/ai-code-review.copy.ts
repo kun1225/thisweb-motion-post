@@ -1,7 +1,6 @@
 import type { CarouselLang, CarouselSlide } from '../../carousel/carousel.type';
 import { CLAWD_CLIP, CLAWD_FRAMES } from './ai-code-review-mascot';
 
-// Only zh for now; the en slides come later.
 export const AI_CODE_REVIEW_SLIDES: Record<CarouselLang, CarouselSlide[]> = {
   zh: [
     {
@@ -54,5 +53,55 @@ export const AI_CODE_REVIEW_SLIDES: Record<CarouselLang, CarouselSlide[]> = {
       source: '來源：How the Claude Code team does code review',
     },
   ],
-  en: [],
+  en: [
+    {
+      layout: 'cover',
+      subtitle: "Anthropic's",
+      title: 'AI Code Review Flow',
+      media: { kind: 'none' },
+      mascot: { clip: CLAWD_CLIP, frames: CLAWD_FRAMES },
+    },
+    {
+      layout: 'text-motion',
+      title: 'How Anthropic Does Code Review',
+      body: 'Anthropic shared how the Claude Code team uses AI to review code. It has **6 key points**:\n\n1. Let AI verify before you open a PR\n2. Build multiple layers of checks\n3. Match human review to the risk\n4. Stop AI from reviewing in circles\n5. Collect the causes of mistakes so AI learns\n6. Humans own the direction and the result',
+    },
+    {
+      layout: 'text-motion',
+      title: '1. Let AI verify before you open a PR',
+      body: 'Before you open a PR or push code, let AI **run tests, build, check the screen, verify the feature, and simplify the code**.\n\nAfter the changes, a different agent reviews them with a **fresh context** to find what was missed.',
+    },
+    {
+      layout: 'text-motion',
+      title: '2. Build multiple layers of checks',
+      body: 'Spread the checks across different stages:\n\n1. Local checks: tests, build, and screen checks\n2. AI Verify: find bugs and side effects\n3. AI security review: blocks the merge\n4. CI checks: format, types, tests, and build\n5. Human approval: depends on risk\n6. Merge and release: roll out step by step\n\nKeep **monitoring and fast rollback** after launch.',
+    },
+    {
+      layout: 'text-motion',
+      title: '3. Match human review to the risk',
+      body: 'The team sets how many people must approve, based on risk:\n\n・Docs and copy: ship after AI checks pass\n・Normal product features: **1 person** approves\n・Payments and core logic: **2 or more people** approve',
+    },
+    {
+      layout: 'text-motion',
+      title: '4. Stop AI from reviewing in circles',
+      body: "Anthropic once had a PR that went back and forth for over **50 rounds**.\n\nNow, **after three rounds**, they rethink the direction, so the same issues don't come up again and again.",
+    },
+    {
+      layout: 'text-motion',
+      title: '5. Collect the causes of mistakes so AI learns',
+      body: 'Record why mistakes happen and how they were fixed. Add the problems that keep coming back to **rules, skills, or automatic checks**.\n\nAlso keep PRs that caused incidents as test cases. Check if the AI can catch similar issues, and track false alarms.',
+    },
+    {
+      layout: 'text-motion',
+      title: '6. Humans own the direction and the result',
+      body: 'Product direction, feature needs, and whether the checks are enough all need a **human to decide**.\n\nOnly humans can be responsible for **what ships**.',
+    },
+    {
+      layout: 'outro',
+      title: 'Want the full article?',
+      cta: 'Comment: **Review**',
+      note: "I'll DM it to you!",
+      source: 'Source: How the Claude Code team does code review',
+    },
+  ],
 };

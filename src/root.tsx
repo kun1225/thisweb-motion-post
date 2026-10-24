@@ -26,9 +26,9 @@ export function RemotionRoot() {
   // Separate nodes let Studio save each slide without changing the others.
   return (
     <>
-      <Folder name="ai-code-review">
+      <Folder name="261026-ai-code-review">
         <Composition
-          id="ai-code-review-zh-1"
+          id="261026-ai-code-review-zh-1"
           component={CarouselComposition}
           defaultProps={{
             layers: {
@@ -57,7 +57,7 @@ export function RemotionRoot() {
           height={CAROUSEL_SIZE.height}
         />
         <Composition
-          id="ai-code-review-zh-2"
+          id="261026-ai-code-review-zh-2"
           component={CarouselComposition}
           defaultProps={{
             layers: {
@@ -94,7 +94,7 @@ export function RemotionRoot() {
           height={CAROUSEL_SIZE.height}
         />
         <Composition
-          id="ai-code-review-zh-3"
+          id="261026-ai-code-review-zh-3"
           component={CarouselComposition}
           defaultProps={{
             layers: {
@@ -131,13 +131,13 @@ export function RemotionRoot() {
           height={CAROUSEL_SIZE.height}
         />
         <Composition
-          id="ai-code-review-zh-4"
+          id="261026-ai-code-review-zh-4"
           component={CarouselComposition}
           defaultProps={{
             layers: {
               motion: {
-                art: 'layers',
-                position: 'right',
+                art: 'runner',
+                position: 'center',
                 color: '#E5E7EB',
                 boil: 2.5,
                 strokeWidth: 3,
@@ -168,7 +168,7 @@ export function RemotionRoot() {
           height={CAROUSEL_SIZE.height}
         />
         <Composition
-          id="ai-code-review-zh-5"
+          id="261026-ai-code-review-zh-5"
           component={CarouselComposition}
           defaultProps={{
             layers: {
@@ -205,7 +205,7 @@ export function RemotionRoot() {
           height={CAROUSEL_SIZE.height}
         />
         <Composition
-          id="ai-code-review-zh-6"
+          id="261026-ai-code-review-zh-6"
           component={CarouselComposition}
           defaultProps={{
             layers: {
@@ -242,7 +242,7 @@ export function RemotionRoot() {
           height={CAROUSEL_SIZE.height}
         />
         <Composition
-          id="ai-code-review-zh-7"
+          id="261026-ai-code-review-zh-7"
           component={CarouselComposition}
           defaultProps={{
             layers: {
@@ -279,7 +279,7 @@ export function RemotionRoot() {
           height={CAROUSEL_SIZE.height}
         />
         <Composition
-          id="ai-code-review-zh-8"
+          id="261026-ai-code-review-zh-8"
           component={CarouselComposition}
           defaultProps={{
             layers: {
@@ -316,7 +316,7 @@ export function RemotionRoot() {
           height={CAROUSEL_SIZE.height}
         />
         <Composition
-          id="ai-code-review-zh-9"
+          id="261026-ai-code-review-zh-9"
           component={CarouselComposition}
           defaultProps={{
             layers: {
@@ -329,6 +329,321 @@ export function RemotionRoot() {
               },
               subtitle: {
                 text: '我把文章私訊給你～！',
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261026-ai-code-review-en-1"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              background: 'code',
+              coverLayout: 'poster',
+              title: {
+                text: 'AI Code Review Flow',
+                fontSize: 140,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              subtitle: {
+                text: "Anthropic's",
+                fontSize: 40,
+                color: '#F7F7F7',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261026-ai-code-review-en-2"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'bot',
+                position: 'center',
+                color: '#E5E7EB',
+                boil: 2.5,
+                strokeWidth: 3,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: 'How Anthropic Does Code Review',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: 'Anthropic shared how the Claude Code team uses AI to review code. It has **6 key points**:\n\n1. Let AI verify before you open a PR\n2. Build multiple layers of checks\n3. Match human review to the risk\n4. Stop AI from reviewing in circles\n5. Collect the causes of mistakes so AI learns\n6. Humans own the direction and the result',
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261026-ai-code-review-en-3"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'verify',
+                position: 'top',
+                color: '#E5E7EB',
+                boil: 2.5,
+                strokeWidth: 4,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: '1. Let AI verify before you open a PR',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: 'Before you open a PR or push code, let AI **run tests, build, check the screen, verify the feature, and simplify the code**.\n\nAfter the changes, a different agent reviews them with a **fresh context** to find what was missed.',
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261026-ai-code-review-en-4"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'runner',
+                position: 'center',
+                color: '#E5E7EB',
+                boil: 2.5,
+                strokeWidth: 3,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: '2. Build multiple layers of checks',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: 'Spread the checks across different stages:\n\n1. Local checks: tests, build, and screen checks\n2. AI Verify: find bugs and side effects\n3. AI security review: blocks the merge\n4. CI checks: format, types, tests, and build\n5. Human approval: depends on risk\n6. Merge and release: roll out step by step\n\nKeep **monitoring and fast rollback** after launch.',
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261026-ai-code-review-en-5"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'risk',
+                position: 'center',
+                color: '#E5E7EB',
+                boil: 2.5,
+                strokeWidth: 3,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: '3. Match human review to the risk',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: 'The team sets how many people must approve, based on risk:\n\n・Docs and copy: ship after AI checks pass\n・Normal product features: **1 person** approves\n・Payments and core logic: **2 or more people** approve',
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261026-ai-code-review-en-6"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'loop',
+                position: 'full',
+                color: '#E5E7EB',
+                boil: 2.5,
+                strokeWidth: 5,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: '4. Stop AI from reviewing in circles',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: "Anthropic once had a PR that went back and forth for over **50 rounds**.\n\nNow, **after three rounds**, they rethink the direction, so the same issues don't come up again and again.",
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261026-ai-code-review-en-7"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'learn',
+                position: 'top',
+                color: '#E5E7EB',
+                boil: 2.5,
+                strokeWidth: 4,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: '5. Collect the causes of mistakes so AI learns',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: 'Record why mistakes happen and how they were fixed. Add the problems that keep coming back to **rules, skills, or automatic checks**.\n\nAlso keep PRs that caused incidents as test cases. Check if the AI can catch similar issues, and track false alarms.',
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261026-ai-code-review-en-8"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'direction',
+                position: 'center',
+                color: '#E5E7EB',
+                boil: 2.5,
+                strokeWidth: 3,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: '6. Humans own the direction and the result',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: 'Product direction, feature needs, and whether the checks are enough all need a **human to decide**.\n\nOnly humans can be responsible for **what ships**.',
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261026-ai-code-review-en-9"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              title: {
+                text: 'Want the full article?',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              subtitle: {
+                text: "I'll DM it to you!",
                 fontSize: 40,
                 color: '#F9FAFB',
                 x: 0,

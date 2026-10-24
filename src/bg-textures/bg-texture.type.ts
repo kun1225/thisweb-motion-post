@@ -3,6 +3,6 @@ export type BgTextureVariant =
 
 export type BgTexturePreviewProps = {
   texture: BgTextureVariant;
-  /** A real ai-code-review slide: 1 = cover, 3 = art and body, 4 = the longest body. */
+  /** A real 261026-ai-code-review slide: 1 = cover, 3 = art and body, 4 = the longest body. */
   slide: 1 | 3 | 4;
 };
