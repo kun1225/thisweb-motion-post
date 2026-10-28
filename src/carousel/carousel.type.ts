@@ -161,7 +161,7 @@ export type CarouselSlide =
     };
 
 export type CarouselPost = {
-  /** Kebab-case; also the composition id prefix and the output folder. */
+  /** Starts with the YYMMDD date, then kebab-case; also the composition id prefix and the output folder. */
   id: string;
   slides: Record<CarouselLang, CarouselSlide[]>;
   /** Draws a `clip` media by its id, at the size of the media box. */

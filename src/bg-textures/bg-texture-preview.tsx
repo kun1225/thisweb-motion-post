@@ -2,7 +2,7 @@ import { AbsoluteFill } from 'remotion';
 
 import { CarouselSlideView } from '../carousel/carousel-slide';
 import type { CarouselLayerSettings } from '../carousel/carousel.type';
-import { aiCodeReviewPost } from '../posts/ai-code-review/ai-code-review';
+import { aiCodeReviewPost } from '../posts/261026-ai-code-review/ai-code-review';
 import { BgTexture } from './bg-texture';
 import type { BgTexturePreviewProps } from './bg-texture.type';
 
@@ -36,8 +36,8 @@ const LAYERS: Record<BgTexturePreviewProps['slide'], CarouselLayerSettings> = {
   },
   4: {
     motion: {
-      art: 'layers',
-      position: 'right',
+      art: 'runner',
+      position: 'center',
       color: '#E5E7EB',
       boil: 2.5,
       strokeWidth: 4,
