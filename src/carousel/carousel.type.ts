@@ -23,7 +23,7 @@ export type CarouselMediaLayer = {
   ratio?: number;
 };
 
-export type CarouselBackgroundVariant = 'drift' | 'grid' | 'code';
+export type CarouselBackgroundVariant = 'drift' | 'grid' | 'code' | 'ascii';
 
 export type CarouselBackgroundProps = {
   /** 0 at the first frame, approaching 1 at the last. */
@@ -59,6 +59,9 @@ export type CarouselMotionLayer = {
   scale?: number;
 };
 
+/** Where `text-effect` slides put the text: `bottom` (bottom left) or `center`. */
+export type CarouselTextEffectPosition = 'bottom' | 'center';
+
 export type CarouselLineArtProps = Omit<
   CarouselMotionLayer,
   'position' | 'art' | 'x' | 'y' | 'scale'
@@ -80,12 +83,16 @@ export type CarouselLayerSettings = {
   background?: CarouselBackgroundVariant;
   /** Cover slides only. */
   coverLayout?: CarouselCoverLayout;
+  /** Covers with `titleFrames` and `text-effect` slides: which of the post's title motions `renderTitle` plays. */
+  titleMotion?: string;
+  /** `text-effect` slides only. */
+  textPosition?: CarouselTextEffectPosition;
   /** List slides only. */
   listLayout?: CarouselListLayout;
-  /** `motion` and `text-motion` slides only. */
+  /** `motion`, `text-motion`, and `text-effect` slides only. On `text-effect` it fills the slide behind the text. */
   motion?: CarouselMotionLayer;
   title: CarouselTextLayer;
-  /** The body on `content`, `list`, and `text-motion` slides. */
+  /** The body on `content`, `list`, `text-motion`, and `text-effect` slides. */
   body?: CarouselTextLayer;
   /** The cover subtitle, or the caption on `motion` slides. */
   subtitle?: CarouselTextLayer;
@@ -97,6 +104,12 @@ export type CarouselCoverProps = {
   lang: CarouselLang;
   layers: CarouselLayerSettings;
   renderClip: CarouselPost['renderClip'];
+  renderTitle: CarouselPost['renderTitle'];
+};
+
+export type CarouselCoverLayoutProps = CarouselCoverProps & {
+  /** The plain title, or the post's moving one. */
+  title: ReactNode;
 };
 
 export type CarouselCompositionProps = {
@@ -143,12 +156,16 @@ export type CarouselSlide =
       title: string;
       media: CarouselMedia;
       mascot?: CarouselMascot;
+      /** Moves the title with the post's `renderTitle`; the cover lasts this many frames. */
+      titleFrames?: number;
     }
   | { layout: 'content'; title: string; body: string; media: CarouselMedia }
   | { layout: 'list'; title: string; body?: string; items: CarouselListItem[] }
   | { layout: 'result'; title: string; tips: string[]; media: CarouselMedia }
   | { layout: 'motion'; title: string; caption: string }
   | { layout: 'text-motion'; title: string; body: string }
+  /** Big text with the effect on the text itself (`titleMotion`) or behind it (`motion`). */
+  | { layout: 'text-effect'; title: string; body: string }
   | {
       layout: 'outro';
       title: string;
@@ -169,6 +186,8 @@ export type CarouselPost = {
     id: string,
     size: { width: number; height: number },
   ) => ReactNode;
+  /** Draws the cover title with the post's own motion, on covers that set `titleFrames`. */
+  renderTitle?: (text: string, motion?: string) => ReactNode;
   /** Line art drawn for this post only, picked by `layers.motion.art`. */
   arts?: Record<string, (props: CarouselLineArtProps) => ReactNode>;
   /** How **highlight** text animates on every slide. Defaults to `sweep`. */

@@ -4,6 +4,7 @@ import { Loop, OffthreadVideo, Sequence, staticFile } from 'remotion';
 import type { HighlightVariant } from '../text-animations/highlight.type';
 import type {
   CarouselCoverLayout,
+  CarouselCoverLayoutProps,
   CarouselCoverProps,
   CarouselLang,
   CarouselLayerSettings,
@@ -26,6 +27,7 @@ import {
 } from './carousel-motion';
 import { CarouselOutro } from './carousel-outro';
 import { CarouselStage } from './carousel-stage';
+import { CarouselTextEffect } from './carousel-text-effect';
 import {
   COLOR,
   CONTENT_WIDTH,
@@ -41,12 +43,13 @@ import {
 export { CAROUSEL_SIZE } from './carousel-parts';
 export const CAROUSEL_FPS = 30;
 
-/** One ThisWeb carousel slide. Text never moves; only highlights change colour, and the media and line art move. */
+/** One ThisWeb carousel slide. Text stays still, except highlights and a cover title the post animates; the media and line art move. */
 export function CarouselSlideView({
   slide,
   lang,
   layers,
   renderClip,
+  renderTitle,
   arts,
   highlight,
   texture,
@@ -55,6 +58,7 @@ export function CarouselSlideView({
   lang: CarouselLang;
   layers: CarouselLayerSettings;
   renderClip: CarouselPost['renderClip'];
+  renderTitle?: CarouselPost['renderTitle'];
   arts?: CarouselPost['arts'];
   highlight?: HighlightVariant;
   texture?: ReactNode;
@@ -76,6 +80,7 @@ export function CarouselSlideView({
           lang={lang}
           layers={layers}
           renderClip={renderClip}
+          renderTitle={renderTitle}
         />
       )}
       {slide.layout === 'cover' && slide.mascot && (
@@ -100,6 +105,15 @@ export function CarouselSlideView({
       {slide.layout === 'text-motion' && (
         <CarouselTextMotion slide={slide} layers={layers} arts={arts} />
       )}
+      {slide.layout === 'text-effect' && (
+        <CarouselTextEffect
+          slide={slide}
+          lang={lang}
+          layers={layers}
+          arts={arts}
+          renderTitle={renderTitle}
+        />
+      )}
       {slide.layout === 'outro' && (
         <CarouselOutro slide={slide} lang={lang} layers={layers} />
       )}
@@ -112,6 +126,7 @@ export function carouselSlideDuration(slide: CarouselSlide) {
   if (
     slide.layout === 'motion' ||
     slide.layout === 'text-motion' ||
+    slide.layout === 'text-effect' ||
     slide.layout === 'outro'
   ) {
     return CAROUSEL_MOTION_FRAMES;
@@ -121,6 +136,7 @@ export function carouselSlideDuration(slide: CarouselSlide) {
   if (media?.kind === 'clip') return media.frames * media.loops;
   // Without this the cover is a one-frame still, so its background never moves.
   if (slide.layout === 'cover' && slide.mascot) return slide.mascot.frames;
+  if (slide.layout === 'cover' && slide.titleFrames) return slide.titleFrames;
   return 1;
 }
 
@@ -133,7 +149,12 @@ function CarouselCover(props: CarouselCoverProps) {
       `Unknown cover layout "${layout}". Use one of: ${Object.keys(COVER_LAYOUTS).join(', ')}.`,
     );
   }
-  return <Layout {...props} />;
+  const { slide, layers, renderTitle } = props;
+  const title =
+    slide.titleFrames && renderTitle
+      ? renderTitle(slide.title, layers.titleMotion)
+      : slide.title;
+  return <Layout {...props} title={title} />;
 }
 
 /** Each layout's own text sizes; a slide's `layers` values override them. */
@@ -156,7 +177,7 @@ const COVER_INSET = `150px ${PAD_X}px 280px`;
 
 const COVER_LAYOUTS: Record<
   CarouselCoverLayout,
-  (props: CarouselCoverProps) => ReactNode
+  (props: CarouselCoverLayoutProps) => ReactNode
 > = {
   stack: CoverStack,
   split: CoverSplit,
@@ -165,7 +186,13 @@ const COVER_LAYOUTS: Record<
 };
 
 /** Subtitle and title centred at the top, media below. */
-function CoverStack({ slide, lang, layers, renderClip }: CarouselCoverProps) {
+function CoverStack({
+  slide,
+  lang,
+  layers,
+  renderClip,
+  title,
+}: CarouselCoverLayoutProps) {
   return (
     <>
       <div
@@ -196,7 +223,7 @@ function CoverStack({ slide, lang, layers, renderClip }: CarouselCoverProps) {
             color: COLOR.title,
           }}
         >
-          {slide.title}
+          {title}
         </CoverText>
       </div>
       <CarouselMediaBox
@@ -210,7 +237,7 @@ function CoverStack({ slide, lang, layers, renderClip }: CarouselCoverProps) {
 }
 
 /** Title at the top left, subtitle at the bottom right. Text only. */
-function CoverSplit({ slide, lang, layers }: CarouselCoverProps) {
+function CoverSplit({ slide, lang, layers, title }: CarouselCoverLayoutProps) {
   return (
     <div
       style={{
@@ -232,7 +259,7 @@ function CoverSplit({ slide, lang, layers }: CarouselCoverProps) {
           color: COLOR.title,
         }}
       >
-        {slide.title}
+        {title}
       </CoverText>
       <CoverText
         name="Subtitle"
@@ -251,7 +278,13 @@ function CoverSplit({ slide, lang, layers }: CarouselCoverProps) {
 }
 
 /** Title at the top, media in the middle, subtitle as a small caption. All centred. */
-function CoverCaption({ slide, lang, layers, renderClip }: CarouselCoverProps) {
+function CoverCaption({
+  slide,
+  lang,
+  layers,
+  renderClip,
+  title,
+}: CarouselCoverLayoutProps) {
   return (
     <div
       style={{
@@ -274,7 +307,7 @@ function CoverCaption({ slide, lang, layers, renderClip }: CarouselCoverProps) {
           color: COLOR.title,
         }}
       >
-        {slide.title}
+        {title}
       </CoverText>
       <CarouselMediaBox
         media={slide.media}
@@ -299,7 +332,7 @@ function CoverCaption({ slide, lang, layers, renderClip }: CarouselCoverProps) {
 }
 
 /** A large title pushed to the bottom left, subtitle as a small label above it. Text only. */
-function CoverPoster({ slide, lang, layers }: CarouselCoverProps) {
+function CoverPoster({ slide, lang, layers, title }: CarouselCoverLayoutProps) {
   return (
     <div
       style={{
@@ -328,7 +361,7 @@ function CoverPoster({ slide, lang, layers }: CarouselCoverProps) {
           color: COLOR.title,
         }}
       >
-        {slide.title}
+        {title}
       </CoverText>
     </div>
   );

@@ -8,7 +8,8 @@ import {
   useVideoConfig,
 } from 'remotion';
 
-import { COLOR } from '../carousel/carousel-theme';
+import { asciiNoiseChar } from '../carousel/carousel-ascii';
+import { COLOR, MONO } from '../carousel/carousel-theme';
 import type { HighlightVariant } from './highlight.type';
 
 /** Set once per slide by `CarouselStage`, so every **highlight** in it looks the same. */
@@ -18,6 +19,7 @@ export const HighlightContext = createContext<HighlightVariant>('sweep');
 export function Highlight({ text }: { text: string }) {
   const variant = useContext(HighlightContext);
   if (variant === 'underline') return <UnderlineHighlight text={text} />;
+  if (variant === 'ascii') return <AsciiHighlight text={text} />;
   return <SweepHighlight text={text} />;
 }
 
@@ -115,6 +117,61 @@ function underlinePoints(boil: number) {
     const pressure = 0.55 + 0.3 * Math.sin(t * 5 + phase);
     return [x, y, pressure];
   });
+}
+
+// *** AsciiHighlight ***
+const ASCII = { delay: 6, stagger: 2, maxSpread: 24, scramble: 14 };
+
+/** Bold text that starts as random symbols and locks in letter by letter, then scrambles again before the loop point. */
+function AsciiHighlight({ text }: { text: string }) {
+  const frame = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
+  const letters = Array.from(text);
+  // Long phrases decode in the same time as short ones.
+  const stagger = Math.min(ASCII.stagger, ASCII.maxSpread / letters.length);
+  // A still has no time to animate, so it shows the plain text.
+  const still =
+    durationInFrames <= ASCII.delay + ASCII.maxSpread + ASCII.scramble;
+  return (
+    <strong style={{ color: COLOR.title }}>
+      {letters.map((letter, i) => {
+        const lockAt = ASCII.delay + i * stagger;
+        const scrambleAt =
+          durationInFrames - ASCII.scramble + i * (stagger / 2);
+        const locked = still || (frame >= lockAt && frame < scrambleAt);
+        if (locked || letter.trim() === '') return letter;
+        return (
+          <AsciiLetter
+            key={i}
+            letter={letter}
+            glyph={asciiNoiseChar(`${text}-${i}`, frame)}
+          />
+        );
+      })}
+    </strong>
+  );
+}
+
+/** Keeps the real letter's width under the symbol, so the line never reflows. */
+function AsciiLetter({ letter, glyph }: { letter: string; glyph: string }) {
+  return (
+    <span style={{ position: 'relative' }}>
+      <span style={{ visibility: 'hidden' }}>{letter}</span>
+      <span
+        style={{
+          position: 'absolute',
+          inset: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          fontFamily: MONO,
+          fontWeight: 400,
+          color: COLOR.highlight,
+        }}
+      >
+        {glyph}
+      </span>
+    </span>
+  );
 }
 
 // *** SweepHighlight ***

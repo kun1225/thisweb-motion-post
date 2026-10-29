@@ -26,6 +26,614 @@ export function RemotionRoot() {
   // Separate nodes let Studio save each slide without changing the others.
   return (
     <>
+      <Folder name="261103-ascii-style">
+        <Composition
+          id="261103-ascii-style-zh-1"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              background: 'ascii',
+              coverLayout: 'split',
+              titleMotion: 'decode',
+              title: {
+                text: 'ASCII 風格',
+                fontSize: 170,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              subtitle: {
+                text: '在網站上使用',
+                fontSize: 72,
+                color: '#F7F7F7',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261103-ascii-style-zh-2"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'wave',
+                position: 'center',
+                color: 'rgba(249, 250, 251, 0.3)',
+                boil: 0,
+                strokeWidth: 3,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: '什麼是 ASCII 風格？',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: '只用**文字和符號**排出畫面，像早期的電腦和終端機。\n\n它很輕、很有個性，而且只要文字就能做到。這篇整理 **6 種**用法：\n\n標題、背景、按鈕、圖片轉文字、載入動畫、骨架載入',
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261103-ascii-style-zh-3"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              textPosition: 'bottom',
+              titleMotion: 'decode',
+              title: {
+                text: '1. 標題',
+                fontSize: 88,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: '標題先變成亂碼，再一個字一個字**解開**。記得加上 `aria-label`，螢幕閱讀器才讀得到。',
+                fontSize: 44,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261103-ascii-style-zh-4"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              textPosition: 'center',
+              motion: {
+                art: 'field',
+                position: 'full',
+                color: 'rgba(249, 250, 251, 0.22)',
+                boil: 0,
+                strokeWidth: 3,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: '2. 背景',
+                fontSize: 88,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: '用 `.:-=+*#` 由淺到深，排出一片**會流動的字元**。放在內容後面時，記得降低對比。',
+                fontSize: 44,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261103-ascii-style-zh-5"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'button',
+                position: 'top',
+                color: '#E5E7EB',
+                boil: 0,
+                strokeWidth: 3,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: '3. 按鈕',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: '滑過時，用**像素方塊**從左到右填滿按鈕，文字也跟著反白。',
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261103-ascii-style-zh-6"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'image',
+                position: 'top',
+                color: '#E5E7EB',
+                boil: 0,
+                strokeWidth: 3,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: '4. 圖片轉文字',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: '看每一格有多**亮**，換成對應的字元，圖片就變成了文字。',
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261103-ascii-style-zh-7"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'loading',
+                position: 'center',
+                color: '#E5E7EB',
+                boil: 0,
+                strokeWidth: 3,
+                x: 0,
+                y: -150,
+                scale: 1.4,
+              },
+              title: {
+                text: '5. 載入動畫',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: '用 `[####....]` 做進度條，加上 `|/-\\` 轉圈，就是**終端機風格**的載入畫面。',
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261103-ascii-style-zh-8"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'skeleton',
+                position: 'top',
+                color: '#E5E7EB',
+                boil: 0,
+                strokeWidth: 3,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: '6. 骨架載入',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: '用 `░` 排出內容的形狀，讓**一道光**掃過。資料到了，再解碼成文字。',
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261103-ascii-style-zh-9"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              listLayout: 'ruled',
+              title: {
+                text: '做 ASCII 風格的小技巧',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261103-ascii-style-en-1"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              background: 'ascii',
+              coverLayout: 'split',
+              titleMotion: 'decode',
+              title: {
+                text: 'ASCII Style',
+                fontSize: 170,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              subtitle: {
+                text: 'Use it on your website',
+                fontSize: 72,
+                color: '#F7F7F7',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261103-ascii-style-en-2"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'wave',
+                position: 'center',
+                color: 'rgba(249, 250, 251, 0.3)',
+                boil: 0,
+                strokeWidth: 3,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: 'What is ASCII style?',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: 'You build the screen with **only letters and symbols**, like old computers and terminals.\n\nIt is light, it has character, and all you need is text. Here are **6 ways** to use it:\n\nheading, background, button, image to text, loading, and skeleton',
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261103-ascii-style-en-3"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              textPosition: 'bottom',
+              titleMotion: 'decode',
+              title: {
+                text: '1. Heading',
+                fontSize: 88,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: 'Turn the heading into noise, then **decode** it letter by letter. Add `aria-label` so screen readers can read it.',
+                fontSize: 44,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261103-ascii-style-en-4"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              textPosition: 'center',
+              motion: {
+                art: 'field',
+                position: 'full',
+                color: 'rgba(249, 250, 251, 0.22)',
+                boil: 0,
+                strokeWidth: 3,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: '2. Background',
+                fontSize: 88,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: 'Use `.:-=+*#` from light to dark to make a **field of moving characters**. Keep the contrast low behind content.',
+                fontSize: 44,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261103-ascii-style-en-5"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'button',
+                position: 'top',
+                color: '#E5E7EB',
+                boil: 0,
+                strokeWidth: 3,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: '3. Button',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: 'On hover, **pixel blocks** fill the button from left to right, and the text flips color.',
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261103-ascii-style-en-6"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'image',
+                position: 'top',
+                color: '#E5E7EB',
+                boil: 0,
+                strokeWidth: 3,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: '4. Image to text',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: 'Check how **bright** each cell is and swap in a matching character. The image turns into text.',
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261103-ascii-style-en-7"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'loading',
+                position: 'center',
+                color: '#E5E7EB',
+                boil: 0,
+                strokeWidth: 3,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: '5. Loading',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: 'Make a progress bar with `[####....]` and a `|/-\\` spinner for a **terminal-style** loader.',
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261103-ascii-style-en-8"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              motion: {
+                art: 'skeleton',
+                position: 'top',
+                color: '#E5E7EB',
+                boil: 0,
+                strokeWidth: 3,
+                x: 0,
+                y: 0,
+                scale: 1,
+              },
+              title: {
+                text: '6. Skeleton loading',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+              body: {
+                text: 'Draw the shape of the content with `░` and sweep **a band of light** across it. When the data arrives, decode it into text.',
+                fontSize: 40,
+                color: '#F9FAFB',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="261103-ascii-style-en-9"
+          component={CarouselComposition}
+          defaultProps={{
+            layers: {
+              listLayout: 'ruled',
+              title: {
+                text: 'Tips for ASCII style',
+                fontSize: 54,
+                color: '#31E8FF',
+                x: 0,
+                y: 0,
+              },
+            },
+          }}
+          calculateMetadata={calculateCarouselMetadata}
+          fps={CAROUSEL_FPS}
+          durationInFrames={1}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+      </Folder>
       <Folder name="261026-ai-code-review">
         <Composition
           id="261026-ai-code-review-zh-1"
@@ -1263,6 +1871,20 @@ export function RemotionRoot() {
           component={HighlightPreview}
           defaultProps={{
             variant: 'underline',
+            text: '開 PR 前，先讓 AI **跑測試、建置、檢查畫面**，再用**新的上下文**審查改動。',
+            fontSize: 56,
+            lang: 'zh',
+          }}
+          fps={CAROUSEL_FPS}
+          durationInFrames={CAROUSEL_MOTION_FRAMES}
+          width={CAROUSEL_SIZE.width}
+          height={CAROUSEL_SIZE.height}
+        />
+        <Composition
+          id="highlight-ascii"
+          component={HighlightPreview}
+          defaultProps={{
+            variant: 'ascii',
             text: '開 PR 前，先讓 AI **跑測試、建置、檢查畫面**，再用**新的上下文**審查改動。',
             fontSize: 56,
             lang: 'zh',

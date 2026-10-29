@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
 
+import { asciiRampChar, asciiWaveField } from './carousel-ascii';
 import type {
   CarouselBackgroundProps,
   CarouselBackgroundVariant,
@@ -34,6 +35,7 @@ const VARIANTS: Record<
   drift: DriftBackground,
   grid: GridBackground,
   code: CodeBackground,
+  ascii: AsciiBackground,
 };
 
 // *** DriftBackground ***
@@ -139,6 +141,47 @@ const CODE_LINES = [
 ];
 const CODE_LINE_HEIGHT = 54;
 const CODE_TILE_HEIGHT = CODE_LINES.length * CODE_LINE_HEIGHT;
+
+// *** AsciiBackground ***
+const ASCII_GRID = { cols: 82, rows: 46, fontSize: 22, lineHeight: 30 };
+const ASCII_CREST = 0.6;
+
+/** A field of characters with a slow wave moving through it. One full wave per slide. */
+function AsciiBackground({ progress }: CarouselBackgroundProps) {
+  const values = asciiWaveField(progress, ASCII_GRID.cols, ASCII_GRID.rows);
+  const field = values.map((row) => row.map(asciiRampChar).join(''));
+  // The crests are a second, brighter layer, so the field needs no per-character colour.
+  const crests = values.map((row) =>
+    row.map((v) => (v > ASCII_CREST ? asciiRampChar(v) : ' ')).join(''),
+  );
+  return (
+    <AbsoluteFill style={{ background: STILL }}>
+      <AsciiLayer lines={field} color={`rgba(${LIGHT}, 0.08)`} />
+      <AsciiLayer lines={crests} color={`rgba(${LIGHT}, 0.22)`} />
+    </AbsoluteFill>
+  );
+}
+
+function AsciiLayer({ lines, color }: { lines: string[]; color: string }) {
+  const fade =
+    'linear-gradient(transparent 0%, black 15%, black 85%, transparent 100%)';
+  return (
+    <AbsoluteFill
+      style={{
+        overflow: 'hidden',
+        fontFamily: '"Paper Mono", ui-monospace, monospace',
+        fontSize: ASCII_GRID.fontSize,
+        lineHeight: `${ASCII_GRID.lineHeight}px`,
+        whiteSpace: 'pre',
+        color,
+        maskImage: fade,
+        WebkitMaskImage: fade,
+      }}
+    >
+      {lines.join('\n')}
+    </AbsoluteFill>
+  );
+}
 
 // *** Shared ***
 const TEAL = '13, 41, 52';

@@ -116,7 +116,15 @@ export function CarouselRichText({ text }: { text: string }) {
         }
         if (part.startsWith('`')) {
           return (
-            <code key={index} style={{ fontFamily: MONO, fontSize: '0.9em' }}>
+            // A line break at a `-` would split a CSS name like `prefers-reduced-motion`.
+            <code
+              key={index}
+              style={{
+                fontFamily: MONO,
+                fontSize: '0.9em',
+                whiteSpace: 'nowrap',
+              }}
+            >
               {part.slice(1, -1)}
             </code>
           );
